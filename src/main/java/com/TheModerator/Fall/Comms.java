@@ -10,6 +10,7 @@ package com.TheModerator.Fall;
 
 import com.TheModerator.Fall.Fall;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -85,7 +86,11 @@ public class Comms {
                 }
                 if (!jsonObject.get((Object)"status").toString().equalsIgnoreCase("ERROR")) break block6;
                 this.master.getServer().getPlayer(this.playerName).chat(String.valueOf(jsonObject.get((Object)"errorReason").toString()) + "</string>");
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
             this.master.getServer().getPlayer(this.playerName).chat("*throws up on carpet*</string>");

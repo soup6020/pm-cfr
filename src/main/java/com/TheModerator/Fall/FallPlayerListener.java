@@ -26,9 +26,6 @@
  */
 package com.TheModerator.Fall;
 
-import com.TheModerator.Fall.Comms;
-import com.TheModerator.Fall.Fall;
-import com.TheModerator.Fall.ProtectedArea;
 import java.util.Date;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -194,29 +191,6 @@ implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        for (ProtectedArea pa : Fall.ProtectedAreas) {
-            if (!pa.ExecuteWrath(event.getPlayer())) continue;
-            long lDateTime = new Date().getTime();
-            if (Fall.LastAutoIssue.containsKey(event.getPlayer().getName())) {
-                if (Fall.LastAutoIssue.get(event.getPlayer().getName()) > lDateTime - 250L) {
-                    return;
-                }
-                Fall.LastAutoIssue.remove(event.getPlayer().getName());
-            } else {
-                Fall.LastAutoIssue.put(event.getPlayer().getName(), lDateTime);
-            }
-            event.setCancelled(true);
-            event.getPlayer().teleport(event.getFrom());
-            String[] args = new String[2];
-            args[1] = event.getPlayer().getName();
-            args[0] = pa.PAD.punishment;
-            if (pa.PAD.Deadly) {
-                Fall.HealthTarget.put(event.getPlayer(), 20);
-            } else {
-                Fall.HealthTarget.put(event.getPlayer(), 0);
-            }
-            this.master.RunPunishment((CommandSender)this.master.getServer().getConsoleSender(), args);
-        }
         if (Fall.BeingPunished.containsKey(event.getPlayer())) {
             int rnd;
             PotionEffect pe;

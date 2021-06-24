@@ -1,7 +1,7 @@
 name: PunishmentalEX
-main: com.TheModerator.Fall.Fall
+main: com.soup6020.pmex
 version: 6.1
-author: MrMudKipPVP (Illegal port by soup6020)
+author: TheModerator (Illegal port by soup6020)
 softdepend: [WorldEdit]
 
 commands:

@@ -43,14 +43,8 @@
  */
 package com.TheModerator.Fall;
 
-import com.TheModerator.Fall.FallEntityListener;
-import com.TheModerator.Fall.FallPlayerListener;
-import com.TheModerator.Fall.ProtectedArea;
-import com.TheModerator.Fall.VirtualPlayer;
-import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -113,7 +107,6 @@ extends JavaPlugin {
     int MinTelDistance;
     boolean RemoteDebug;
     WorldEditPlugin worldEdit = null;
-    public static List<ProtectedArea> ProtectedAreas;
     long lastTick;
     int lagCheckID;
     int ticklength = 50;
@@ -137,7 +130,6 @@ extends JavaPlugin {
     int punishmentsdone = 0;
 
     static {
-        ProtectedAreas = new Vector<ProtectedArea>();
         Restoration = new HashMap();
         Tasks = new HashMap();
         OldLocations = new HashMap();
@@ -213,14 +205,7 @@ extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         this.UpdateDB(false);
         this.log.info(this.getDescription().getVersion());
-        try {
-            Metrics metrics = new Metrics((Plugin)this);
-            metrics.enable();
-            metrics.start();
-        }
-        catch (IOException e) {
-            this.log.info("Error communicating with Metrics server :(");
-        }
+
         this.MaxTelDistance = this.getConfig().getInt("Teleport.MaxDistance");
         this.MinTelDistance = this.getConfig().getInt("Teleport.MinDistance");
         this.FallHeight = this.getConfig().getInt("Fall.BlockHeight");
@@ -249,40 +234,7 @@ extends JavaPlugin {
         }
         this.saveConfig();
         this.reloadConfig();
-        this.log.info("[Punishmental]: Connecting to WorldEdit");
-        if (this.getServer().getPluginManager().getPlugin("WorldEdit") == null) {
-            this.log.info("[Punishmental]: WorldEdit not found... Continuing...");
-        } else {
-            this.worldEdit = (WorldEditPlugin)this.getServer().getPluginManager().getPlugin("WorldEdit");
-            this.log.info("[Punishmental]: WorldEdit found and loaded, loading punishable areas");
-            File PunishmentalDir = new File("plugins/Punishmental/ProtectedAreas/");
-            if (!PunishmentalDir.exists()) {
-                PunishmentalDir.mkdir();
-            }
-            File[] fileArray = PunishmentalDir.listFiles();
-            int n3 = fileArray.length;
-            n = 0;
-            while (n < n3) {
-                File file = fileArray[n];
-                this.log.info("Scanning: " + file.getName());
-                if (file.isFile() && file.getName().contains(".ppa")) {
-                    ProtectedArea savedArea = new ProtectedArea(file.getName().replace(".ppa", ""), this);
-                    ProtectedAreas.add(savedArea);
-                }
-                ++n;
-            }
-        }
-        Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler(){
 
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                StringWriter sw = new StringWriter();
-                System.out.println("GOT YOUR ERRROR RIIIIIGHHHTHTT HERE!");
-                e.printStackTrace(new PrintWriter(sw));
-                String stacktrace = sw.toString();
-                System.out.println(stacktrace);
-            }
-        });
         this.log.info("[Punishmental]: Commands READY");
     }
 
@@ -1717,245 +1669,41 @@ extends JavaPlugin {
      * Unable to fully structure code
      */
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("unprotect")) {
-            for (ProtectedArea PA : Fall.ProtectedAreas) {
-                if (!PA.PAD.Owner.equalsIgnoreCase(sender.getName()) && !sender.hasPermission("punishAreas.admin") || !PA.PAD.ID.equalsIgnoreCase(args[0])) continue;
-                if (PA.deleteArea()) {
-                    Fall.ProtectedAreas.remove(PA);
-                    sender.sendMessage(ChatColor.GREEN + "> Punishmental Protected Area Deleted");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "> Failed to remove Punishmental Protected Area");
-                    sender.sendMessage(ChatColor.RED + "> System may not have required access rights");
-                }
-                return true;
-            }
-            sender.sendMessage(ChatColor.RED + "> Could not find area " + args[0]);
+
+        try {
+            Punishments.valueOf(args[1].toUpperCase());
+        } catch (Throwable t) {
+            sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Please try again.");
+            return false;
+        }
+        if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
+            sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
             return true;
         }
-        if (cmd.getName().equalsIgnoreCase("lockdown")) {
-            for (ProtectedArea PA : Fall.ProtectedAreas) {
-                if (!PA.PAD.ID.equalsIgnoreCase(args[0])) continue;
-                if (PA.PAD.Owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("punishAreas.admin")) {
-                    PA.PAD.LOCKED = true;
-                    PA.saveArea();
-                    sender.sendMessage(ChatColor.GREEN + "> Area Sucessfully Locked Down");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED + "> Inadequate permissions to lockdown area");
-                return true;
-            }
-            sender.sendMessage(ChatColor.RED + "> Area " + args[0] + " Not Found");
-            return true;
-        }
-        if (cmd.getName().equalsIgnoreCase("reopen")) {
-            for (ProtectedArea PA : Fall.ProtectedAreas) {
-                if (!PA.PAD.ID.equalsIgnoreCase(args[0])) continue;
-                if (PA.PAD.Owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("punishAreas.admin")) {
-                    PA.PAD.LOCKED = false;
-                    PA.saveArea();
-                    sender.sendMessage(ChatColor.GREEN + "> Area Sucessfully Re-opened to allowed players");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED + "> Inadequate permissions to reopen area");
-                return true;
-            }
-            sender.sendMessage(ChatColor.RED + "> Area " + args[0] + " Not Found");
-            return true;
-        }
-        if (cmd.getName().equalsIgnoreCase("Permit") || cmd.getName().equalsIgnoreCase("Deny")) {
-            areaName = "";
-            Pa = null;
-            userName = "";
-            for (Object PA : Fall.ProtectedAreas) {
-                if (!PA.PAD.Owner.equalsIgnoreCase(sender.getName()) && !sender.hasPermission("punishAreas.admin")) continue;
-                if (PA.PAD.ID.equalsIgnoreCase(args[0]) || PA.PAD.ID.equalsIgnoreCase(args[1])) {
-                    areaName = PA.PAD.ID;
-                    Pa = PA;
-                }
-                if (PA.PAD.ID.equalsIgnoreCase(args[0])) {
-                    userName = args[1];
-                    continue;
-                }
-                if (!PA.PAD.ID.equalsIgnoreCase(args[1])) continue;
-                userName = args[0];
-            }
-            if (areaName == "") {
-                sender.sendMessage(ChatColor.RED + "> Could not find either area " + args[1] + " nor " + args[0]);
-                sender.sendMessage(ChatColor.RED + "> Please check that you own the area, and that it is spelt correctly");
-                return true;
-            }
-            if (cmd.getName().equalsIgnoreCase("Permit") || sender.hasPermission("punishAreas.admin")) {
-                Pa.PAD.AllowedPlayers.add(userName.toLowerCase());
-                sender.sendMessage(ChatColor.GREEN + "> Player " + userName + " will no longer be punished for entering area " + Pa.PAD.ID);
-            } else if (cmd.getName().equalsIgnoreCase("Deny") || sender.hasPermission("punishAreas.admin")) {
-                if (Pa.PAD.Owner.equalsIgnoreCase(userName)) {
-                    sender.sendMessage(ChatColor.RED + "> Player " + userName + "is owner of " + Pa.PAD.ID + " and so can not be removed from the punishment list");
-                    return true;
-                }
-                Pa.PAD.AllowedPlayers.remove(userName.toLowerCase());
-                sender.sendMessage(ChatColor.GREEN + "> Player " + userName + " will be punished for entering area " + Pa.PAD.ID);
-            }
-        }
-        if (cmd.getName().equalsIgnoreCase("protect")) {
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.AQUA + "     " + ChatColor.UNDERLINE + "==== Punishmental Protected Areas Help Guide ==== ");
-                sender.sendMessage(ChatColor.AQUA + "You can use the following commands to protect areas using punishmental");
-                sender.sendMessage(ChatColor.DARK_AQUA + "    " + ChatColor.UNDERLINE + "/Protect [<Area>/List/Enable/Disable/Permit/Deny] [Punishment/<Area>]");
-                sender.sendMessage(ChatColor.AQUA + "This command can be used to create a new area, or modify a current one.");
-                sender.sendMessage(ChatColor.DARK_AQUA + "/Protect <Area> <Punishment>");
-                sender.sendMessage(ChatColor.AQUA + "To make a new one, specify the area in WorldEdit, then use " + ChatColor.DARK_AQUA + "/Protect <Area> <Punishment>");
-                sender.sendMessage(ChatColor.AQUA + "where <Area> is the name of the area, and <Punishment> is the name of the punishment you want to use");
-                sender.sendMessage(ChatColor.DARK_AQUA + "/Protect List");
-                sender.sendMessage(ChatColor.AQUA + "This lists the areas you own");
-                sender.sendMessage(ChatColor.DARK_AQUA + "/Protect [Enable/Disable] <Area>");
-                sender.sendMessage(ChatColor.AQUA + "Enables or disables the area defined with <area>");
-                sender.sendMessage(ChatColor.DARK_AQUA + "/Protect [Permit/Deny] <Area> <Player>");
-                sender.sendMessage(ChatColor.AQUA + "Permits or Denies the player specified with <Player> entry to <Area>");
-                sender.sendMessage(ChatColor.DARK_AQUA + "    " + ChatColor.UNDERLINE + "/Unprotect <Area>");
-                sender.sendMessage(ChatColor.AQUA + "Deletes <Area> forever");
-                sender.sendMessage(ChatColor.DARK_AQUA + "    " + ChatColor.UNDERLINE + "/Lockdown <Area>");
-                sender.sendMessage(ChatColor.AQUA + "Denies absolutely everyone access to <Area>");
-                sender.sendMessage(ChatColor.DARK_AQUA + "    " + ChatColor.UNDERLINE + "/Reopen <Area>");
-                sender.sendMessage(ChatColor.AQUA + "Restores normal access conditions to <Area> following a lockdown");
-                sender.sendMessage(ChatColor.AQUA + " ");
-                sender.sendMessage(ChatColor.AQUA + "                   The above list is scrollable");
-                sender.sendMessage(ChatColor.AQUA + " ");
-                sender.sendMessage(ChatColor.AQUA + "     " + ChatColor.UNDERLINE + "^^^^ Punishmental Protected Areas Help Guide ^^^^ ");
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("list")) {
-                if (args.length > 1) {
-                    for (ProtectedArea PA : Fall.ProtectedAreas) {
-                        if (!PA.PAD.ID.equalsIgnoreCase(args[1])) continue;
-                        if (PA.PAD.Owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("punishAreas.admin")) {
-                            for (BlockVector2D point : PA.area.getNativePoints()) {
-                                sender.sendMessage(ChatColor.GREEN + "> " + point.getX() + ", " + point.getZ());
-                            }
-                            sender.sendMessage(ChatColor.GREEN + ">- Height: " + PA.area.getHeight());
-                            sender.sendMessage(ChatColor.GREEN + ">- Start Block Y: " + PA.area.getMinimumPoint().getBlockY());
-                            return true;
-                        }
-                        sender.sendMessage(ChatColor.RED + "> Inadequate permissions to view area bounds");
-                        return true;
-                    }
-                    return true;
-                }
-                sender.sendMessage(">>> You can modify the following protected areas:");
-                owned = false;
-                for (ProtectedArea PA : Fall.ProtectedAreas) {
-                    if (!PA.PAD.Owner.equalsIgnoreCase(sender.getName()) && !sender.hasPermission("punishAreas.admin")) continue;
-                    owned = true;
-                    sender.sendMessage("> " + PA.PAD.ID + " (" + PA.PAD.punishment + ")");
-                }
-                if (!owned) {
-                    sender.sendMessage(ChatColor.RED + "> NONE.");
-                }
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("permit") || args[0].equalsIgnoreCase("deny")) {
-                owned = false;
-                for (ProtectedArea PA : Fall.ProtectedAreas) {
-                    if (!PA.PAD.ID.equalsIgnoreCase(args[1])) continue;
-                    owned = true;
-                    if (PA.PAD.Owner.equalsIgnoreCase(sender.getName())) {
-                        if (args[0].equalsIgnoreCase("disable")) {
-                            sender.sendMessage("> Disabling " + PA.PAD.ID);
-                            PA.PAD.active = false;
-                            PA.saveArea();
-                            sender.sendMessage(ChatColor.GREEN + "> Area " + PA.PAD.ID + " Disabled");
-                            return true;
-                        }
-                        if (args[0].equalsIgnoreCase("enable")) {
-                            sender.sendMessage("> Enabling " + PA.PAD.ID);
-                            PA.PAD.active = true;
-                            PA.saveArea();
-                            sender.sendMessage(ChatColor.GREEN + "> Area " + PA.PAD.ID + " Enabled");
-                            return true;
-                        }
-                        if (args[0].equalsIgnoreCase("permit")) {
-                            sender.sendMessage("> Changing access rules for " + PA.PAD.ID);
-                            PA.PAD.AllowedPlayers.add(args[2].toUpperCase());
-                            PA.saveArea();
-                            sender.sendMessage(ChatColor.GREEN + "> Player " + args[2].toUpperCase() + " is now allowed to access " + PA.PAD.ID);
-                            return true;
-                        }
-                        if (args[0].equalsIgnoreCase("deny")) {
-                            if (PA.PAD.Owner.equalsIgnoreCase(args[2])) {
-                                sender.sendMessage(ChatColor.RED + "> Player " + args[2] + "is owner of " + PA.PAD.ID + " and so can not be removed from the punishment list");
-                                return true;
-                            }
-                            sender.sendMessage("> Changing access rules for " + PA.PAD.ID);
-                            PA.PAD.AllowedPlayers.remove(args[2].toUpperCase());
-                            PA.saveArea();
-                            sender.sendMessage(ChatColor.GREEN + "> Player " + args[2].toUpperCase() + " is now prohbited from " + PA.PAD.ID);
-                            return true;
-                        }
-                        sender.sendMessage(ChatColor.YELLOW + "- Unreacheable code executed. Prepare to divide by zero");
-                        sender.sendMessage(ChatColor.YELLOW + "- Jokes. Plz report this to TheModerator@roestudios.co.uk, stating code TTET66DI5H");
-                        continue;
-                    }
-                    sender.sendMessage(ChatColor.RED + "> You do not have permissions to modify " + args[1]);
-                }
-                if (!owned) {
-                    sender.sendMessage(ChatColor.RED + "> Protected Area " + args[1] + " Not Found.");
-                }
-                return true;
-            }
-            if (!sender.hasPermission("punishAreas.make")) {
-                sender.sendMessage(ChatColor.RED + "> You do not have permissions to create punishment areas");
-                return true;
-            }
-            if (this.worldEdit == null) {
-                sender.sendMessage(ChatColor.RED + "> This server does not have WorldGuard, so you can't select an area. Sorry!");
-                return true;
-            }
-            modifyingArea = null;
-            for (ProtectedArea PA : Fall.ProtectedAreas) {
-                if (!PA.PAD.ID.equalsIgnoreCase(args[0])) continue;
-                if (PA.PAD.Owner.equalsIgnoreCase(sender.getName()) || sender.hasPermission("punishAreas.admin")) {
-                    modifyingArea = PA;
-                    continue;
-                }
-                sender.sendMessage("> You do not have permissions to edit " + args[1]);
-                return true;
-            }
-            if (modifyingArea != null) {
-                if (args.length >= 2) {
+
+        if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
+            block97:
+            {
+                block98:
+                {
                     try {
-                        Punishments.valueOf(args[1].toUpperCase());
-                    }
-                    catch (Throwable t) {
-                        sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Could not update area. Please try again.");
-                        return false;
-                    }
-                    if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
-                        sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection modification aborted.");
+                        str = args[0];
+                        str.length();
+                    } catch (Throwable t) {
+                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                        this.printusage(sender);
                         return true;
                     }
-                    deadly = false;
-                    if (args.length >= 3) {
-                        modifyingArea.PAD.Deadly = args[2].contains("Y") != false || args[2].contains("y") != false || args[2].contains("20") != false;
-                    }
-                    modifyingArea.PAD.punishment = args[1].toUpperCase();
-                    modifyingArea.saveArea();
-                    sender.sendMessage(ChatColor.GREEN + "> Area " + modifyingArea.PAD.ID + " Punishment Updated");
-                } else {
-                    selection = this.worldEdit.getSelection(this.getServer().getPlayer(sender.getName()));
-                    if (selection == null) {
-                        sender.sendMessage(ChatColor.RED + "> No area selected: Aborted");
-                        return true;
-                    }
-                    modifyingArea.updateArea(selection, this.getServer().getPlayer(sender.getName()).getWorld());
-                    modifyingArea.saveArea();
-                    sender.sendMessage(ChatColor.GREEN + "> Area " + modifyingArea.PAD.ID + " Location Changed");
                 }
-                return true;
             }
-            selection = this.worldEdit.getSelection(this.getServer().getPlayer(sender.getName()));
-            if (selection == null) {
-                sender.sendMessage(ChatColor.RED + "> No area selected: Aborted");
-                return true;
-            }
+        }
+    }
+                public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("Permit") || cmd.getName().equalsIgnoreCase("Deny")) {
+            userName = "";
+
+        }
             try {
                 Punishments.valueOf(args[1].toUpperCase());
             }
@@ -1967,13 +1715,55 @@ extends JavaPlugin {
                 sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
                 return true;
             }
-            deadly = false;
-            deadly = args.length >= 3 ? args[2].contains("Y") || args[2].contains("y") || args[2].contains("20") : false;
-            newArea = new ProtectedArea(args[0], selection, this.getServer().getPlayer(sender.getName()).getWorld(), args[1].toUpperCase(), sender.getName(), deadly);
-            Fall.ProtectedAreas.add((ProtectedArea)newArea);
-            newArea.saveArea();
-            sender.sendMessage(ChatColor.GREEN + "> Sucessfully made area " + args[0] + " with punishment " + args[1].toLowerCase());
-            return true;
+
+        if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
+            block97: {
+                block98: {
+                    try {
+                        str = args[0];
+                        str.length();
+                    }
+                    catch (Throwable t) {
+                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                        this.printusage(sender);
+                        return true;
+                    }
+                    if (sender.getName() == "CONSOLE" || sender.getName() == "") {
+                        sender.sendMessage("Command being sent from console - Security bypassed");
+                    } else {
+                        if (!this.SecurityCheck((Player)sender)) {
+                            sender.sendMessage("Invalid Credentials - could not run!");
+                            return false;
+                        }
+                        if (args[0].equalsIgnoreCase("restore")) {
+                            if (sender.hasPermission("punish.restore")) {
+                                sender.sendMessage(ChatColor.RED + "Restore functions do not seem to be working. I'll try anyway, but please check that it's done it :)");
+                                this.RestoreDamaged(sender, args);
+                                return true;
+                            }
+                            sender.sendMessage(ChatColor.RED + "You do not have the correct permissions to run this command");
+                            return false;
+                        }
+                    }
+                    if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
+                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                        this.printusage(sender);
+                        return true;
+                    }
+
+            try {
+                Punishments.valueOf(args[1].toUpperCase());
+            }
+            catch (Throwable t) {
+                sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Please try again.");
+                return false;
+            }
+            if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
+                sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
+                return true;
+            }
         }
         if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
             block97: {
@@ -1989,6 +1779,164 @@ extends JavaPlugin {
                         return true;
                     }
                     if (sender.getName() == "CONSOLE" || sender.getName() == "") {
+                        sender.sendMessage("Command being sent from console - Security bypassed");
+                    } else {
+                        if (!this.SecurityCheck((Player)sender)) {
+                            sender.sendMessage("Invalid Credentials - could not run!");
+                            return false;
+                        }
+                        if (args[0].equalsIgnoreCase("restore")) {
+                            if (sender.hasPermission("punish.restore")) {
+                                sender.sendMessage(ChatColor.RED + "Restore functions do not seem to be working. I'll try anyway, but please check that it's done it :)");
+                                this.RestoreDamaged(sender, args);
+                                return true;
+                            }
+                            sender.sendMessage(ChatColor.RED + "You do not have the correct permissions to run this command");
+                            return false;
+                        }
+                    }
+                    if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
+                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                        this.printusage(sender);
+                        return true;
+                    }
+
+                    sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.YELLOW + "Error!");
+                sender.sendMessage(ChatColor.YELLOW + "The player " + args[1] + " or " + args[0] + " was not found");
+                sender.sendMessage(ChatColor.YELLOW + "Check the player is spelt correctly, and that argument three was a number");
+                return true;
+            }
+            return this.VetPunishment(sender, args);
+        }
+        if (cmd.getName().equalsIgnoreCase("SaveUserData")) {
+            if (this.getServer().getPlayer(args[0]) == null) {
+                sender.sendMessage(ChatColor.RED + "Can't find user. DID NOT SAVE USER DATA");
+            } else {
+                p = this.getServer().getPlayer(args[0]);
+                v = new VirtualPlayer(p.getLevel(), p.getTotalExperience(), p.getHealth(), p.getInventory().getContents(), p.getExhaustion(), p.getFoodLevel());
+                Fall.PlayerRestore.put(p.getName(), v);
+                sender.sendMessage(ChatColor.GREEN + "User Data Sucessfully Stored");
+            }
+            return true;
+        }
+        if (cmd.getName().equalsIgnoreCase("RestoreUserData")) {
+            if (this.getServer().getPlayer(args[0]) == null) {
+                sender.sendMessage(ChatColor.RED + "Can't find user on this server!");
+            } else {
+                p = this.getServer().getPlayer(args[0]);
+                if (!Fall.PlayerRestore.containsKey(p.getName())) {
+                    sender.sendMessage(ChatColor.RED + "You haven't made a restore file for this user!");
+                    sender.sendMessage(ChatColor.RED + "DID NOT RESTORE USER DATA!");
+                } else {
+                    p.setExhaustion(Fall.PlayerRestore.get((Object)p.getName()).exh);
+                    p.setLevel(Fall.PlayerRestore.get((Object)p.getName()).Level);
+                    p.setFoodLevel(Fall.PlayerRestore.get((Object)p.getName()).Hunger);
+                    p.setHealth((double)((int)Fall.PlayerRestore.get((Object)p.getName("aborted"))));
+                                return false;
+                            }
+                            filusername = null;
+                            rad = 0;
+                            while (filusername == null || rad <= 2000) {
+                                for (Entity ent : Psender.getNearbyEntities((double)rad, (double)rad, (double)rad)) {
+                                    try {
+                                        Ptarget = (Player)ent;
+                                        filusername = Ptarget.getName();
+                                    }
+                                    catch (Throwable var14_46) {
+                                        // empty catch block
+                                    }
+                                }
+                            }
+                            if (rad >= 2000) {
+                                sender.sendMessage(ChatColor.RED + "No nearby players!");
+                                return false;
+                            }
+                            s.replace("@near", filusername);
+                            sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
+                        }
+                        ++selection;
+                    }
+                    try {
+                        subject = this.getServer().getPlayer(args[1]);
+                        subject.getDisplayName();
+                        break block97;
+                    }
+                    catch (Throwable t) {
+                        try {
+                            subject = this.getServer().getPlayer(args[0]);
+                            subject.getDisplayName();
+                            one = args[1];
+                            args[1] = zero = args[0];
+                            args[0] = one;
+                            break block97;
+                        }
+                        catch (Throwable n) {
+                            if (!args[0].equalsIgnoreCase("all") && !args[1].equalsIgnoreCase("all")) break block98;
+                            var10_33 = this.getServer().getOnlinePlayers();
+                            var9_30 = var10_33.length;
+                            var8_32 = 0;
+                            while (var8_32 < var9_30);
+                        }
+                    }
+lbl1000:
+                    // 1 sources
+
+                    {
+                        p = var10_33[var8_32];
+                        if (args[0].equalsIgnoreCase("all")) {
+                            one = args[1];
+                            args[1] = zero = args[0];
+                            args[0] = one;
+                        }
+                        args[1] = p.getName();
+                        if (!args[1].equalsIgnoreCase(sender.getName())) {
+                            this.VetPunishment(sender, args);
+                        }
+                        ++var8_32;
+                        continue;
+                    }
+lbl371:
+                    // 1 sources
+
+                    sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.YELLOW + "Error!");
+                sender.sendMessage(ChatColor.YELLOW + "The player " + args[1] + " or " + args[0] + " was not found");
+                sender.sendMessage(ChatColor.YELLOW + "Check the player is spelt correctly, and that argument three was a number");
+                return true;
+            }
+            return this.VetPunishment(sender, args);
+        }
+}
+        if (cmd.getName().equalsIgnoreCase("SaveUserData")) {
+            if (this.getServer().getPlayer(args[0]) == null) {
+                sender.sendMessage(ChatColor.RED + "Can't find user. DID NOT SAVE USER DATA");
+            } else {
+                p = this.getServer().getPlayer(args[0]);
+                v = new VirtualPlayer(p.getLevel(), p.getTotalExperience(), p.getHealth(), p.getInventory().getContents(), p.getExhaustion(), p.getFoodLevel());
+                Fall.PlayerRestore.put(p.getName(), v);
+                sender.sendMessage(ChatColor.GREEN + "User Data Sucessfully Stored");
+            }
+            return true;
+        }
+        if (cmd.getName().equalsIgnoreCase("RestoreUserData")) {
+            if (this.getServer().getPlayer(args[0]) == null) {
+                sender.sendMessage(ChatColor.RED + "Can't find user on this server!");
+            } else {
+                p = this.getServer().getPlayer(args[0]);
+                if (!Fall.PlayerRestore.containsKey(p.getName())) {
+                    sender.sendMessage(ChatColor.RED + "You haven't made a restore file for this user!");
+                    sender.sendMessage(ChatColor.RED + "DID NOT RESTORE USER DATA!");
+                } else {
+                    p.setExhaustion(Fall.PlayerRestore.get((Object)p.getName()).exh);
+                    p.setLevel(Fall.PlayerRestore.get((Object)p.getName()).Level);
+                    p.setFoodLevel(Fall.PlayerRestore.get((Object)p.getName()).Hunger);
+                    p.setHealth((double)((int)Fall.PlayerRestore.get((Object)p.getName() {
                         sender.sendMessage("Command being sent from console - Security bypassed");
                     } else {
                         if (!this.SecurityCheck((Player)sender)) {
@@ -2113,10 +2061,10 @@ extends JavaPlugin {
                             var10_33 = this.getServer().getOnlinePlayers();
                             var9_30 = var10_33.length;
                             var8_32 = 0;
-                            **while (var8_32 < var9_30)
+                            while (var8_32 < var9_30);
                         }
                     }
-lbl-1000:
+/* lbl-1000: */
                     // 1 sources
 
                     {

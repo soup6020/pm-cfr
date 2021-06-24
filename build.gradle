@@ -24,7 +24,8 @@ repositories {
 }
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.2.5-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.5-SNAPSHOT'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 }
 
