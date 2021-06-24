@@ -45,7 +45,6 @@ package com.TheModerator.Fall;
 
 import com.TheModerator.Fall.FallEntityListener;
 import com.TheModerator.Fall.FallPlayerListener;
-import com.TheModerator.Fall.Metrics;
 import com.TheModerator.Fall.ProtectedArea;
 import com.TheModerator.Fall.VirtualPlayer;
 import com.sk89q.worldedit.BlockVector2D;
@@ -2114,7 +2113,7 @@ extends JavaPlugin {
                             var10_33 = this.getServer().getOnlinePlayers();
                             var9_30 = var10_33.length;
                             var8_32 = 0;
-                            ** while (var8_32 < var9_30)
+                            **while (var8_32 < var9_30)
                         }
                     }
 lbl-1000:
