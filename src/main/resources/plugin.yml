@@ -1,0 +1,309 @@
+name: PunishmentalEX
+main: com.TheModerator.Fall
+version: 6.1
+author: TheModerator (Illegal port by soup6020)
+softdepend: [WorldEdit]
+
+commands:
+   Punish:
+      description: Use /Punish followed by the Punishment type and the player you are punishing
+      usage: /Punish [Punishment] <-> [Username/All] [Opt. damage/x/y] [amount of times] [delay] [Other]
+      aliases: p
+   SaveUserData:
+      description: Saves the users XP, Inventory, HP ect...
+      usage: /SaveUserData [Username]
+   RestoreUserData:
+      description: Restores a user form the last "saveuserdata"
+      usage: /RestoreUserData [Username]
+   ResetPunishmental:
+      description: Resets all punishmental punishments and releases any tasks utilised by the plugin.
+      usage: /ResetPunishmental
+permissions:
+    ResetPunishmental:
+        description: Allows the person to reset punishmental
+        default: op
+    punish.*:
+        description: Gives access to all punishments
+        children:
+            punish.fall: true
+            punish.explode: true
+            punish.hounds: true
+            punish.infall: true
+            punish.void: true
+            punish.invoid: true
+            punish.creeper: true
+            punish.web: true
+            punish.strike: true
+            punish.lavablock: true
+            punish.hole: true
+            punish.burn: true
+            punish.end: true
+            punish.teleport: true
+            punish.freeze: true
+            punish.irongolem: true
+            punish.restore: true
+            punish.hailfire: true
+            punish.fstrike: true
+            punish.fexplode: true
+            punish.paranoia: true
+            punish.slow: true
+            punish.drunk: true
+            punish.blind: true
+            punish.starve: true
+            punish.poison: true
+            punish.strip: true
+            punish.nether: true
+            punish.chatroll: true
+            punish.stop: true
+            punish.glass: true
+            punish.babble: true
+            punish.lag: true
+            punish.choke: true
+            punish.unaware: true
+            punish.downlevel: true
+            punish.annoy: true
+            punish.surround: true
+            punish.rotate: true
+            punish.flamingarrow: true
+            punish.reverse: true
+            punish.rename: true
+            punish.kick: true
+            punish.fragile: true
+            punish.block: true
+            punish.chat: true
+            punish.night: true
+            punish.rewind: true
+            punish.dragon: true
+            punish.slap: true
+            punish.exblock: true
+            punish.hostile: true
+            punish.slender: true
+            punish.mute: true
+            punish.drop: true
+            punish.spam: true
+            punish.anvil: true
+            punish.cage: true
+            punish.fakeop: true
+            punish.white: true
+            punish.popup: true
+            punish.deaf: true
+            punish.test: true
+            punish.popular: true
+            punish.pumpkin: true
+            punish.armour: true
+            punish.potato: true
+            punish.display: true
+            punish.tree: true
+            punish.hiss: true
+            punish.tnttrick: true
+            punish.tnt: true
+            punish.fire: true
+            punish.squid: true
+            punish.useless: true
+            punish.crash: true
+            punish.potate: true
+            punish.wrong: true
+            punish.arab: true
+            punish.metro: true
+            punish.bomb: true
+            punish.nuke: true
+            punish.EXEMPT: false
+    punish.fall:
+        default: op
+    punish.irongolem:
+        default: op
+    punish.freeze:
+        default: op
+    punish.infall:
+        default: op
+    punish.void:
+        default: op
+    punish.invoid:
+        default: op
+    punish.creeper:
+        default: op
+    punish.hounds:
+        default: op
+    punish.strike:
+        default: op
+    punish.hole:
+        default: op
+    punish.web:
+        default: op
+    punish.explode:
+        default: op
+    punish.burn:
+        default: op
+    punish.lavablock:
+        default: op
+    punish.end:
+        default: op
+    punish.teleport:
+        default: op
+    punish.hailfire:
+        default: op
+    punish.restore:
+        default: op
+    punish.fexplode:
+        default: op
+    punish.fstrike:
+        default: op
+    punish.paranoia:
+        default: op
+    punish.slow:
+        default: op
+    punish.drunk:
+        default: op
+    punish.blind:
+        default: op
+    punish.starve:
+        default: op
+    punish.poison:
+        default: op
+    punish.strip:
+        default: op
+    punish.nether:
+        default: op
+    punish.chatroll:
+        default: op
+    punish.stop:
+        default: op
+    punish.glass:
+        default: op
+    punish.shoot:
+        default: op
+    punish.babble:
+        default: op
+    punish.lag:
+        default: op
+    punish.choke:
+        default: op
+    punish.unaware:
+        default: op
+    punish.downlevel:
+        default: op
+    punish.annoy:
+        default: op
+    punish.surround:
+        default: op
+    punish.rotate:
+        default: op
+    punish.flamingarrow:
+        default: op
+    punish.reverse:
+        default: op
+    punish.rename:
+        default: op
+    punish.kick:
+        default: op
+    punish.fragile:
+        default: op
+    punish.block:
+        default: op
+    punish.chat:
+        default: op
+    punish.night:
+        default: op
+    punish.rewind:
+        default: op
+    punish.dragon:
+        default: op
+    punish.slap:
+        default: op
+    punish.exblock:
+        default: op
+    punish.hostile:
+        default: op
+    punish.slender:
+        default: op
+    punish.mute:
+        default: op
+    punish.drop:
+        default: op
+    punish.spam:
+        default: op
+    punish.anvil:
+        default: op
+    punish.cage:
+        default: op
+    punish.fakeop:
+        default: op
+    punish.white:
+        default: op
+    punish.popup:
+        default: op
+    punish.deaf:
+        default: op
+    punish.test:
+        default: op
+    punish.popular:
+        default: op
+    punish.pumpkin:
+        default: op
+    punish.armour:
+        default: op
+    punish.potato:
+        default: op
+    punish.display:
+        default: op
+    punish.tree:
+        default: op
+    punish.hiss:
+        default: op
+    punish.ambiance:
+        default: op
+    punish.maim:
+        default: op
+    punish.brittle:
+        default: op
+    punish.tnttrick:
+        default: op
+    punish.tnt:
+        default: op
+    punish.fire:
+        default: op
+    punish.squid:
+        default: op
+    punish.useless:
+        default: op
+    punish.crash:
+        default: op
+    punish.idtheft:
+        default: op
+    punish.wrong:
+        default: op
+    punish.potate:
+        default: op
+    punish.bomb:
+        default: op
+    punish.nuke:
+        default: op
+    punish.metro:
+        default: op
+    punish.arab:
+        default: op
+    punish.scream:
+        default: op
+    punish.trip:
+        default: op
+    punish.EXEMPT:
+        default: op
+
+    punishLevel.*:
+        description: Sets the level of the players on the leveled punishment system
+        children:
+            punishLevel.MASTER: false
+            punishLevel.two: false
+            punishLevel.three: false
+            punishLevel.four: false
+            punishLevel.five: true
+        punishLevel.MASTER:
+          default: false
+        punishLevel.two:
+          default: false
+        punishLevel.three:
+          default: op
+        punishLevel.four:
+         default: false
+        punishLevel.five:
+         default: true

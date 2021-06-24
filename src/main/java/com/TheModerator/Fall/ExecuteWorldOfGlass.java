@@ -33,31 +33,6 @@ extends Thread {
         int z = sz;
         int distance = 0;
         int maxdist = 15;
-        while (distance < maxdist) {
-            x = sx - distance;
-            while (x < sx + distance + 1) {
-                y = sy - distance;
-                while (y < sy + distance + 1) {
-                    z = sz - distance;
-                    while (z < sz + distance + 1) {
-                        Location lc2 = new Location(this.subject.getWorld(), (double)x, (double)y, (double)z);
-                        if (lc2.getBlock().getTypeId() != 0 & lc2.getBlock().getTypeId() != 20) {
-                            this.subject.sendBlockChange(lc2, 20, this.subject.getWorld().getBlockAt(lc2).getData());
-                            try {
-                                Thread.sleep(0L, 1);
-                            }
-                            catch (InterruptedException e) {
-                                this.log.info(ChatColor.RED + "ERROR SLEEPING FOR 1 NS IN EWOG THREAD - INTERRUPTED");
-                            }
-                        }
-                        ++z;
-                    }
-                    ++y;
-                }
-                ++x;
-            }
-            ++distance;
-        }
         this.log.info(ChatColor.GREEN + "----------- EWOG FINISHED -----------");
     }
 }

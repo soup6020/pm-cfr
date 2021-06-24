@@ -281,7 +281,7 @@ implements Listener {
         if (Fall.BeingPunished.containsKey(event.getPlayer())) {
             if (Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.LAVABLOCK) {
                 event.setCancelled(true);
-                event.getPlayer().getWorld().getBlockAt(event.getBlock().getLocation()).setTypeId(10);
+                event.getPlayer().getWorld().getBlockAt(event.getBlock().getLocation()).setType(Material.LAVA);
                 Fall.BeingPunished.remove(event.getPlayer());
             } else if (Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.FREEZE || Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.BLOCK) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Some weird force stops you from doing that :/");
@@ -305,15 +305,15 @@ implements Listener {
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         Player subject;
-        if (Fall.autopunishData.Enabled && Fall.autopunishData.ExplodeBlock == event.getBlock().getTypeId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
+        if (Fall.autopunishData.Enabled && Fall.autopunishData.ExplodeBlock == event.getBlock().getType().getId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
             subject = event.getPlayer();
             subject.getWorld().createExplosion(subject.getLocation(), 0.0f);
             subject.sendMessage(ChatColor.RED + "Do not place banned blocks");
             subject.damage(20.0);
-            event.getBlock().setTypeId(0);
+            event.getBlock().setType(Material.AIR);
             event.setCancelled(true);
         }
-        if (Fall.autopunishData.Enabled && Fall.autopunishData.CreeperBlock == event.getBlock().getTypeId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
+        if (Fall.autopunishData.Enabled && Fall.autopunishData.CreeperBlock == event.getBlock().getType().getId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
             subject = event.getPlayer();
             subject.getWorld().createExplosion(subject.getLocation(), 0.0f);
             subject.sendMessage(ChatColor.RED + "Do not place banned blocks");
@@ -324,7 +324,7 @@ implements Listener {
             cchasing.damage(1.0, (Entity)subject);
             Fall.BeingPunished.put(subject, Fall.Punishments.CREEPER);
         }
-        if (Fall.autopunishData.Enabled && Fall.autopunishData.FallBlock == event.getBlock().getTypeId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
+        if (Fall.autopunishData.Enabled && Fall.autopunishData.FallBlock == event.getBlock().getType().getId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
             subject = event.getPlayer();
             subject.getWorld().createExplosion(subject.getLocation(), 0.0f);
             subject.sendMessage(ChatColor.RED + "Do not place banned blocks");
@@ -335,7 +335,7 @@ implements Listener {
             subject.teleport(location);
             event.setCancelled(true);
         }
-        if (Fall.autopunishData.Enabled && Fall.autopunishData.AnvilBlock == event.getBlock().getTypeId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
+        if (Fall.autopunishData.Enabled && Fall.autopunishData.AnvilBlock == event.getBlock().getType().getId() && !event.getPlayer().hasPermission("Punish.EXEMPT")) {
             subject = event.getPlayer();
             Fall.BeingPunished.put(subject, Fall.Punishments.FREEZE);
             subject.sendMessage("What the?");
@@ -345,7 +345,7 @@ implements Listener {
             double z = playerLocation.getBlockZ();
             Location loc = new Location(playerLocation.getWorld(), x, y, z);
             Block block = subject.getWorld().getBlockAt(loc);
-            block.setTypeId(145);
+            block.setType(Material.ANVIL);
             event.setCancelled(true);
         }
     }
@@ -379,7 +379,7 @@ implements Listener {
             }
             if (Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.LAVABLOCK) {
                 event.setCancelled(true);
-                event.getPlayer().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setTypeId(10);
+                event.getPlayer().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.LAVA);
                 Fall.BeingPunished.remove(event.getPlayer());
             } else if (Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.FREEZE || Fall.BeingPunished.get(event.getPlayer()) == Fall.Punishments.BLOCK) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Some weird force stops you from doing that :/");

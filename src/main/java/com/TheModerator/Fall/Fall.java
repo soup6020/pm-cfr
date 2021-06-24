@@ -150,7 +150,7 @@ extends JavaPlugin {
         if (this.lagCheckID == 0) {
             this.log.warning(ChatColor.GREEN + "[Punishmental] Starting lag checker");
             this.lastTick = 0L;
-            this.lagCheckID = this.getServer().getScheduler().scheduleAsyncRepeatingTask((Plugin)this, new Runnable(){
+            this.lagCheckID = this.getServer().getScheduler().scheduleAsyncRepeatingTask((Plugin) this, new Runnable() {
 
                 @Override
                 public void run() {
@@ -173,7 +173,7 @@ extends JavaPlugin {
     }
 
     public void CheckLag() {
-        if (System.currentTimeMillis() > this.lastTick + (long)this.ticklength + (long)configSettings.FailsafeLagMargin) {
+        if (System.currentTimeMillis() > this.lastTick + (long) this.ticklength + (long) configSettings.FailsafeLagMargin) {
             this.activateFailsafe();
         }
         this.lastTick = System.currentTimeMillis();
@@ -197,8 +197,8 @@ extends JavaPlugin {
             PunishmentUsage.put(punishment, 0);
             ++n2;
         }
-        this.getServer().getPluginManager().registerEvents((Listener)new FallPlayerListener(this), (Plugin)this);
-        this.getServer().getPluginManager().registerEvents((Listener)new FallEntityListener(), (Plugin)this);
+        this.getServer().getPluginManager().registerEvents((Listener) new FallPlayerListener(this), (Plugin) this);
+        this.getServer().getPluginManager().registerEvents((Listener) new FallEntityListener(), (Plugin) this);
         this.saveConfig();
         this.reloadConfig();
         this.getConfig();
@@ -248,7 +248,7 @@ extends JavaPlugin {
                     int newX = loc.getBlockX() + (x - distance / 2);
                     int newY = loc.getBlockY() + (y - distance / 2);
                     int newZ = loc.getBlockZ() + (z - distance / 2);
-                    this.AddtoRestore(new Location(loc.getWorld(), (double)newX, (double)newY, (double)newZ));
+                    this.AddtoRestore(new Location(loc.getWorld(), (double) newX, (double) newY, (double) newZ));
                     ++z;
                 }
                 ++y;
@@ -259,7 +259,7 @@ extends JavaPlugin {
 
     public void RestoreDamaged(CommandSender sender, String[] args) {
         sender.sendMessage(ChatColor.GRAY + "Clearing Up " + Restoration.size() + " Blocks, Please wait...");
-        Player subject = (Player)sender;
+        Player subject = (Player) sender;
         for (Map.Entry<Location, Material> entry : Restoration.entrySet()) {
             entry.getKey().getBlock().setType(entry.getValue());
         }
@@ -272,7 +272,7 @@ extends JavaPlugin {
         subject.chat("ARRRRRRRRRRRRGGGGGGHHHHHH...");
         Location location = null;
         location = subject.getLocation();
-        location.setY((double)this.FallHeight);
+        location.setY((double) this.FallHeight);
         BeingPunished.put(subject, Punishments.FALL);
         subject.teleport(location);
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
@@ -287,11 +287,11 @@ extends JavaPlugin {
 
     public void ExecuteTeleport(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        int xtel = (int)(this.rndgen.nextDouble() * (double)(this.MaxTelDistance - this.MinTelDistance) + (double)this.MinTelDistance);
-        int ztel = (int)(this.rndgen.nextDouble() * (double)(this.MaxTelDistance - this.MinTelDistance) + (double)this.MinTelDistance);
+        int xtel = (int) (this.rndgen.nextDouble() * (double) (this.MaxTelDistance - this.MinTelDistance) + (double) this.MinTelDistance);
+        int ztel = (int) (this.rndgen.nextDouble() * (double) (this.MaxTelDistance - this.MinTelDistance) + (double) this.MinTelDistance);
         Location location = null;
         location = subject.getLocation();
-        location.add((double)xtel, 0.0, (double)ztel);
+        location.add((double) xtel, 0.0, (double) ztel);
         location = subject.getWorld().getHighestBlockAt(location).getLocation();
         subject.teleport(location);
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
@@ -306,80 +306,10 @@ extends JavaPlugin {
         Restoration.put(tostore, tostore.getBlock().getType());
     }
 
-    public void ExecuteWeb(CommandSender sender, String[] args) {
-        Player subject = this.getServer().getPlayer(args[1]);
-        subject.chat(ChatColor.YELLOW + "*does ninja moves in front of face to avoid spider webs*");
-        Location webb = subject.getLocation();
-        webb.setX(webb.getX() - 2.0);
-        webb.setY(webb.getY() - 2.0);
-        webb.setZ(webb.getZ() - 2.0);
-        int x = 0;
-        int y = 0;
-        int z = 0;
-        while (x <= 4) {
-            y = 0;
-            while (y <= 4) {
-                z = 0;
-                while (z <= 4) {
-                    this.AddtoRestore(webb.getBlock().getLocation().add((double)x, (double)y, (double)z));
-                    ++z;
-                }
-                ++y;
-            }
-            ++x;
-        }
-        int i = 0;
-        webb = subject.getLocation();
-        webb.setX(webb.getX() - 2.0);
-        webb.setY(webb.getY() - 2.0);
-        webb.setZ(webb.getZ() - 2.0);
-        while (i < 4) {
-            ++i;
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() - 3.0);
-            webb.setY(webb.getY() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() - 3.0);
-            webb.setY(webb.getY() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() - 3.0);
-            webb.setY(webb.getY() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() + 1.0);
-            subject.getWorld().getBlockAt(webb).setTypeId(30);
-            webb.setX(webb.getX() - 3.0);
-            webb.setY(webb.getY() - 3.0);
-            webb.setZ(webb.getZ() + 1.0);
-            this.log.info(webb.toString());
-        }
-    }
-
     public void ExecuteExplode(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
         this.AddRestoreSector(subject.getLocation(), 9);
-        subject.getWorld().createExplosion((double)subject.getLocation().getBlockX(), (double)subject.getLocation().getBlockY(), (double)subject.getLocation().getBlockZ(), 4.0f);
+        subject.getWorld().createExplosion((double) subject.getLocation().getBlockX(), (double) subject.getLocation().getBlockY(), (double) subject.getLocation().getBlockZ(), 4.0f);
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
     }
 
@@ -402,7 +332,7 @@ extends JavaPlugin {
                     int newX = loc.getBlockX() + (x - xdistance / 2);
                     int newY = loc.getBlockY() + (y - ydistance / 2);
                     int newZ = loc.getBlockZ() + (z - zdistance / 2);
-                    subject.getWorld().createExplosion((double)newX, (double)newY, (double)newZ, power, true, true);
+                    subject.getWorld().createExplosion((double) newX, (double) newY, (double) newZ, power, true, true);
                     z += seperation;
                 }
                 y += seperation;
@@ -423,7 +353,7 @@ extends JavaPlugin {
         sender.sendMessage(ChatColor.GRAY + "The server will now crash until the detonation is complete.");
         sender.sendMessage(ChatColor.GRAY + "Commencing...");
         noDrops = true;
-        subject.getWorld().createExplosion((double)subject.getLocation().getBlockX(), (double)subject.getLocation().getBlockY(), (double)subject.getLocation().getBlockZ(), 800.0f, true, true);
+        subject.getWorld().createExplosion((double) subject.getLocation().getBlockX(), (double) subject.getLocation().getBlockY(), (double) subject.getLocation().getBlockZ(), 800.0f, true, true);
         noDrops = false;
         sender.sendMessage(ChatColor.GREEN + "Detonation Complete. Punishment Dispensed Successfuly");
         sender.sendMessage(ChatColor.GRAY + "Server has explosion bufferes present... Reloading...");
@@ -434,7 +364,7 @@ extends JavaPlugin {
         Player subject = this.getServer().getPlayer(args[1]);
         subject.setHealth(0.0);
         this.ExecuteStop(sender, args);
-        Player[] playerArray = this.getServer().getOnlinePlayers();
+        Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
         int n = playerArray.length;
         int n2 = 0;
         while (n2 < n) {
@@ -448,9 +378,9 @@ extends JavaPlugin {
     public void ExecuteCreeper(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
         Location LC2 = subject.getLocation();
-        Creeper cchasing = (Creeper)subject.getWorld().spawnEntity(LC2, EntityType.CREEPER);
+        Creeper cchasing = (Creeper) subject.getWorld().spawnEntity(LC2, EntityType.CREEPER);
         cchasing.setPowered(true);
-        cchasing.damage(1.0, (Entity)subject);
+        cchasing.damage(1.0, (Entity) subject);
         BeingPunished.put(subject, Punishments.CREEPER);
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
     }
@@ -459,7 +389,7 @@ extends JavaPlugin {
         Player subject = this.getServer().getPlayer(args[1]);
         subject.getWorld().strikeLightning(subject.getLocation());
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
-        subject.setHealth((double)HealthTarget.get(subject).intValue());
+        subject.setHealth((double) HealthTarget.get(subject).intValue());
         BeingPunished.put(subject, Punishments.STRIKE);
     }
 
@@ -468,7 +398,7 @@ extends JavaPlugin {
         subject.chat("ARRRRRRRRRRRRGGGGGGHHHHHH...");
         Location location = null;
         location = subject.getLocation();
-        location.setY((double)this.FallHeight);
+        location.setY((double) this.FallHeight);
         BeingPunished.put(subject, Punishments.INFALL);
         OldLocations.put(subject, subject.getLocation());
         subject.teleport(location);
@@ -497,8 +427,8 @@ extends JavaPlugin {
         location = location.add(0.0, 30.0, 0.0);
         this.log.info(subject.getLocation().toString());
         location.setPitch(90.0f);
-        Fireball fb = (Fireball)subject.getWorld().spawn(location, Fireball.class);
-        fb.setShooter((ProjectileSource)subject);
+        Fireball fb = (Fireball) subject.getWorld().spawn(location, Fireball.class);
+        fb.setShooter((ProjectileSource) subject);
         fb.setFireTicks(9999999);
         fb.setIsIncendiary(true);
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
@@ -534,13 +464,13 @@ extends JavaPlugin {
         final Player subject = this.getServer().getPlayer(args[1]);
         PotionEffect pe = new PotionEffect(PotionEffectType.BLINDNESS, 999999, 4);
         subject.addPotionEffect(pe);
-        final Enderman slender = (Enderman)subject.getWorld().spawnEntity(subject.getLocation(), EntityType.ENDERMAN);
+        final Enderman slender = (Enderman) subject.getWorld().spawnEntity(subject.getLocation(), EntityType.ENDERMAN);
         subject.sendMessage("Sl-enderman is behind you...");
         if (Tasks.containsKey(args[1])) {
             this.getServer().getScheduler().cancelTask(Tasks.get(args[1]).intValue());
             Tasks.remove(args[1]);
         }
-        int taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask((Plugin)this, new Runnable(){
+        int taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask((Plugin) this, new Runnable() {
 
             @Override
             public void run() {
@@ -617,9 +547,9 @@ extends JavaPlugin {
         Player subject = this.getServer().getPlayer(args[1]);
         Location location = null;
         Location permlocation = location = subject.getLocation();
-        permlocation.setX((double)subject.getLocation().getBlockX() + 0.5);
-        permlocation.setY((double)subject.getLocation().getBlockY());
-        permlocation.setZ((double)subject.getLocation().getBlockZ() + 0.5);
+        permlocation.setX((double) subject.getLocation().getBlockX() + 0.5);
+        permlocation.setY((double) subject.getLocation().getBlockY());
+        permlocation.setZ((double) subject.getLocation().getBlockZ() + 0.5);
         subject.teleport(permlocation);
         int i = 0;
         while (i < configSettings.HoleDepth) {
@@ -650,7 +580,7 @@ extends JavaPlugin {
             sender.sendMessage(ChatColor.RED + "Nether not enabled on this server :(");
             return;
         }
-        loc.setWorld((World)this.getServer().getWorlds().get(1));
+        loc.setWorld((World) this.getServer().getWorlds().get(1));
         loc.setY(33.0);
         Boolean okay = false;
         int step = 0;
@@ -673,19 +603,19 @@ extends JavaPlugin {
     public void ExecuteFloorPortal(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
         Location loc = subject.getLocation();
-        loc.getBlock().setTypeId(119);
+        loc.getBlock().setType(Material.END_PORTAL);
         Location location = null;
         Location permlocation = location = subject.getLocation();
-        permlocation.setX((double)subject.getLocation().getBlockX() + 0.5);
-        permlocation.setY((double)subject.getLocation().getBlockY());
-        permlocation.setZ((double)subject.getLocation().getBlockZ() + 0.5);
+        permlocation.setX((double) subject.getLocation().getBlockX() + 0.5);
+        permlocation.setY((double) subject.getLocation().getBlockY());
+        permlocation.setZ((double) subject.getLocation().getBlockZ() + 0.5);
         subject.teleport(permlocation);
         int i = 0;
         Restoration.put(subject.getLocation().getBlock().getRelative(BlockFace.DOWN, 2).getLocation(), subject.getLocation().getBlock().getRelative(BlockFace.DOWN, 2).getType());
         while (i < 3) {
             Restoration.put(subject.getLocation().getBlock().getRelative(BlockFace.DOWN, i).getLocation(), subject.getLocation().getBlock().getRelative(BlockFace.DOWN, i).getType());
             subject.getLocation().getBlock().getRelative(BlockFace.DOWN, i).setType(Material.AIR);
-            subject.getLocation().getBlock().getRelative(BlockFace.DOWN, 2).setTypeId(119);
+            subject.getLocation().getBlock().getRelative(BlockFace.DOWN, 2).setType(Material.END_PORTAL);
             ++i;
             location = location.subtract(0.0, 1.0, 0.0);
         }
@@ -735,7 +665,7 @@ extends JavaPlugin {
         HealthTarget.remove(subject);
         subject.setWalkSpeed(0.2f);
         subject.setCanPickupItems(true);
-        Player[] playerArray = this.getServer().getOnlinePlayers();
+        Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
         int n = playerArray.length;
         int n2 = 0;
         while (n2 < n) {
@@ -767,7 +697,7 @@ extends JavaPlugin {
             this.getServer().getScheduler().cancelTask(Tasks.get(args[1]).intValue());
             Tasks.remove(args[1]);
         }
-        int taskid = this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this, new Runnable(){
+        int taskid = this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin) this, new Runnable() {
 
             @Override
             public void run() {
@@ -787,14 +717,14 @@ extends JavaPlugin {
 
     public void ExecutePotate(CommandSender sender, String[] args) {
         final Player subject = this.getServer().getPlayer(args[1]);
-        int taskid = this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this, new Runnable(){
+        int taskid = this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin) this, new Runnable() {
 
             @Override
             public void run() {
-                ItemStack is = new ItemStack(Material.POTATO_ITEM);
-                is.setType(Material.POTATO_ITEM);
+                ItemStack is = new ItemStack(Material.POTATO);
+                is.setType(Material.POTATO);
                 is.setAmount(64);
-                is.setDurability((short)1);
+                is.setDurability((short) 1);
                 subject.getWorld().dropItemNaturally(subject.getLocation().add(0.0, 2.0, 0.0), is);
             }
         }, 1L, 1L);
@@ -813,7 +743,7 @@ extends JavaPlugin {
 
     public void ExecuteUnaware(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        Player[] playerArray = this.getServer().getOnlinePlayers();
+        Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
         int n = playerArray.length;
         int n2 = 0;
         while (n2 < n) {
@@ -840,23 +770,23 @@ extends JavaPlugin {
         double z = playerLocation.getBlockZ();
         World currentWorld = subject.getWorld();
         Location loc = new Location(currentWorld, x, y, z);
-        loc.setX(loc.getX() + (double)(rg.nextInt(21) - 10));
+        loc.setX(loc.getX() + (double) (rg.nextInt(21) - 10));
         loc.setY(loc.getY());
-        loc.setZ(loc.getZ() + (double)(rg.nextInt(21) - 10));
-        List list = subject.getNearbyEntities((double)configSettings.SurroundDistance, (double)configSettings.SurroundDistance, (double)configSettings.SurroundDistance);
+        loc.setZ(loc.getZ() + (double) (rg.nextInt(21) - 10));
+        List list = subject.getNearbyEntities((double) configSettings.SurroundDistance, (double) configSettings.SurroundDistance, (double) configSettings.SurroundDistance);
         int i = 0;
         if (list.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "There are no entities near the player. Punishment Failed. Plz Try again later");
             return;
         }
-        for (Entity ent : subject.getNearbyEntities((double)configSettings.SurroundDistance, (double)configSettings.SurroundDistance, (double)configSettings.SurroundDistance)) {
+        for (Entity ent : subject.getNearbyEntities((double) configSettings.SurroundDistance, (double) configSettings.SurroundDistance, (double) configSettings.SurroundDistance)) {
             if (!(ent instanceof Creature)) continue;
             ++i;
-            Creature mob = (Creature)ent;
+            Creature mob = (Creature) ent;
             mob.teleport(subject.getLocation());
-            mob.setTarget((LivingEntity)subject);
+            mob.setTarget((LivingEntity) subject);
         }
-        sender.sendMessage(ChatColor.GREEN + i + " Entities were teleported to the players location.");
+        sender.sendMessage(new StringBuilder().append(ChatColor.GREEN + Integer.toString(i)).append(" Entities were teleported to the players location.").toString());
     }
 
     public void ExecuteHostile(CommandSender sender, String[] args) {
@@ -868,22 +798,22 @@ extends JavaPlugin {
         double z = playerLocation.getBlockZ();
         World currentWorld = subject.getWorld();
         Location loc = new Location(currentWorld, x, y, z);
-        loc.setX(loc.getX() + (double)(rg.nextInt(21) - 10));
+        loc.setX(loc.getX() + (double) (rg.nextInt(21) - 10));
         loc.setY(loc.getY());
-        loc.setZ(loc.getZ() + (double)(rg.nextInt(21) - 10));
-        List list = subject.getNearbyEntities((double)configSettings.HostileRange, (double)configSettings.HostileRange, (double)configSettings.HostileRange);
+        loc.setZ(loc.getZ() + (double) (rg.nextInt(21) - 10));
+        List list = subject.getNearbyEntities((double) configSettings.HostileRange, (double) configSettings.HostileRange, (double) configSettings.HostileRange);
         int i = 0;
         if (list.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "There are no entities near the player. Punishment Failed. Try again later");
             return;
         }
-        for (Entity ent : subject.getNearbyEntities((double)configSettings.HostileRange, (double)configSettings.HostileRange, (double)configSettings.HostileRange)) {
+        for (Entity ent : subject.getNearbyEntities((double) configSettings.HostileRange, (double) configSettings.HostileRange, (double) configSettings.HostileRange)) {
             if (!(ent instanceof Creature)) continue;
             ++i;
-            Creature mob = (Creature)ent;
-            mob.setTarget((LivingEntity)subject);
+            Creature mob = (Creature) ent;
+            mob.setTarget((LivingEntity) subject);
         }
-        sender.sendMessage(ChatColor.GREEN + i + " Entities made hostile.");
+        sender.sendMessage(new StringBuilder().append(ChatColor.GREEN + Integer.toString(i)).append(" Entities made hostile.").toString());
     }
 
     public void ExecuteAnnoy(CommandSender sender, String[] args) {
@@ -894,8 +824,8 @@ extends JavaPlugin {
         double z = playerLocation.getBlockZ();
         World currentWorld = subject.getPlayer().getWorld();
         Location Villager1 = new Location(currentWorld, x + 1.0, y, z);
-        Villager v1 = (Villager)subject.getWorld().spawnEntity(Villager1, EntityType.VILLAGER);
-        v1.setTarget((LivingEntity)subject);
+        Villager v1 = (Villager) subject.getWorld().spawnEntity(Villager1, EntityType.VILLAGER);
+        v1.setTarget((LivingEntity) subject);
         sender.sendMessage(ChatColor.GREEN + "Sent a villager");
     }
 
@@ -954,7 +884,7 @@ extends JavaPlugin {
 
     public void ExecutePopular(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        Player[] playerArray = this.getServer().getOnlinePlayers();
+        Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
         int n = playerArray.length;
         int n2 = 0;
         while (n2 < n) {
@@ -970,7 +900,7 @@ extends JavaPlugin {
         ItemStack is = subject.getItemInHand();
         is.setAmount(1);
         is.setType(Material.PUMPKIN);
-        is.setDurability((short)0);
+        is.setDurability((short) 0);
         subject.getInventory().setHelmet(is);
         sender.sendMessage(ChatColor.GREEN + "Subject has a pumpkin on his/her head");
     }
@@ -980,7 +910,7 @@ extends JavaPlugin {
         ItemStack is = subject.getItemInHand();
         is.setAmount(1);
         is.setType(Material.BUCKET);
-        is.setDurability((short)0);
+        is.setDurability((short) 0);
         subject.getInventory().setHelmet(is);
         subject.getInventory().setChestplate(is);
         subject.getInventory().setLeggings(is);
@@ -992,8 +922,8 @@ extends JavaPlugin {
         Player subject = this.getServer().getPlayer(args[1]);
         ItemStack is = subject.getItemInHand();
         is.setAmount(1);
-        is.setType(Material.POTATO_ITEM);
-        is.setDurability((short)0);
+        is.setType(Material.POTATO);
+        is.setDurability((short) 0);
         subject.getWorld().dropItemNaturally(subject.getLocation(), is);
         OldLocations.put(subject, subject.getLocation());
         Location location = null;
@@ -1017,21 +947,21 @@ extends JavaPlugin {
         int i = -1;
         while (i < 3) {
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(0.0, (double)i, 1.0));
+            this.Editblock(20, baselocation.add(0.0, (double) i, 1.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(0.0, (double)i, -1.0));
+            this.Editblock(20, baselocation.add(0.0, (double) i, -1.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(1.0, (double)i, 0.0));
+            this.Editblock(20, baselocation.add(1.0, (double) i, 0.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(1.0, (double)i, 1.0));
+            this.Editblock(20, baselocation.add(1.0, (double) i, 1.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(1.0, (double)i, -1.0));
+            this.Editblock(20, baselocation.add(1.0, (double) i, -1.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(-1.0, (double)i, 0.0));
+            this.Editblock(20, baselocation.add(-1.0, (double) i, 0.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(-1.0, (double)i, 1.0));
+            this.Editblock(20, baselocation.add(-1.0, (double) i, 1.0));
             baselocation = subject.getLocation();
-            this.Editblock(20, baselocation.add(-1.0, (double)i, -1.0));
+            this.Editblock(20, baselocation.add(-1.0, (double) i, -1.0));
             baselocation = subject.getLocation();
             ++i;
         }
@@ -1040,7 +970,7 @@ extends JavaPlugin {
     }
 
     public void Editblock(int blockid, Location loc) {
-        loc.getBlock().setTypeId(20);
+        loc.getBlock().setType(Material.GLASS);
     }
 
     public void ExecuteWhite(CommandSender sender, String[] args) {
@@ -1051,28 +981,28 @@ extends JavaPlugin {
 
     public void ExecutePopup(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        subject.openInventory((Inventory)subject.getInventory());
+        subject.openInventory((Inventory) subject.getInventory());
         sender.sendMessage(ChatColor.GREEN + "Popped up the players inventory");
     }
 
     public void ExecuteBooty(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        Player[] playerArray = this.getServer().getOnlinePlayers();
+        Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
         int n = playerArray.length;
         int n2 = 0;
         while (n2 < n) {
             Player p = playerArray[n2];
-            p.openInventory((Inventory)subject.getInventory());
+            p.openInventory((Inventory) subject.getInventory());
             ++n2;
         }
-        subject.openInventory((Inventory)subject.getInventory());
+        subject.openInventory((Inventory) subject.getInventory());
         sender.sendMessage(ChatColor.GREEN + "Opened the player's inventory to everyone else");
     }
 
     public void ExecuteTree(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
         Location playerLocation = subject.getLocation();
-        Location centre = new Location(playerLocation.getWorld(), (double)playerLocation.getBlockX() + 0.5, (double)playerLocation.getBlockY(), (double)playerLocation.getBlockZ() + 0.5);
+        Location centre = new Location(playerLocation.getWorld(), (double) playerLocation.getBlockX() + 0.5, (double) playerLocation.getBlockY(), (double) playerLocation.getBlockZ() + 0.5);
         subject.teleport(centre);
         boolean fail = false;
         if (!subject.getWorld().generateTree(subject.getLocation().add(1.0, 0.0, 0.0), TreeType.BIRCH)) {
@@ -1096,13 +1026,13 @@ extends JavaPlugin {
 
     public void ExecuteHiss(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        subject.playSound(subject.getLocation(), Sound.CREEPER_HISS, 1.0f, 1.0f);
+        subject.playSound(subject.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1.0f, 1.0f);
         sender.sendMessage(ChatColor.GREEN + " Imaginary Hiss Sent");
     }
 
     public void ExecuteAmbiance(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        subject.playSound(subject.getLocation(), Sound.AMBIENCE_CAVE, 1.0f, 1.0f);
+        subject.playSound(subject.getLocation(), Sound.AMBIENT_CAVE, 1.0f, 1.0f);
         sender.sendMessage(ChatColor.GREEN + " Ambiance sent");
     }
 
@@ -1124,7 +1054,7 @@ extends JavaPlugin {
         subject.getWorld().getBlockAt(subject.getEyeLocation().getBlockX() - 1, subject.getEyeLocation().getBlockY(), subject.getEyeLocation().getBlockZ()).setType(Material.TNT);
         subject.getWorld().getBlockAt(subject.getEyeLocation().getBlockX(), subject.getEyeLocation().getBlockY(), subject.getEyeLocation().getBlockZ() + 1).setType(Material.TNT);
         subject.getWorld().getBlockAt(subject.getEyeLocation().getBlockX(), subject.getEyeLocation().getBlockY(), subject.getEyeLocation().getBlockZ() - 1).setType(Material.TNT);
-        subject.playSound(subject.getLocation(), Sound.FUSE, 1.0f, 1.0f);
+        subject.playSound(subject.getLocation(), Sound.ENTITY_TNT_PRIMED, 1.0f, 1.0f);
         sender.sendMessage(ChatColor.GREEN + " Pulled a TNT Trick");
     }
 
@@ -1176,12 +1106,11 @@ extends JavaPlugin {
         ListIterator itr = subject.getInventory().iterator();
         while (itr.hasNext()) {
             try {
-                ItemStack element = (ItemStack)itr.next();
+                ItemStack element = (ItemStack) itr.next();
                 ItemMeta im = element.getItemMeta();
                 im.setDisplayName("Useless");
                 element.setItemMeta(im);
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 // empty catch block
             }
         }
@@ -1189,8 +1118,8 @@ extends JavaPlugin {
     }
 
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-        int x = rnddgen.nextInt(((Enum[])clazz.getEnumConstants()).length);
-        return (T)((Enum[])clazz.getEnumConstants())[x];
+        int x = rnddgen.nextInt(((Enum[]) clazz.getEnumConstants()).length);
+        return (T) ((Enum[]) clazz.getEnumConstants())[x];
     }
 
     public void ExecuteIDTheft(CommandSender sender, String[] args) {
@@ -1203,12 +1132,11 @@ extends JavaPlugin {
         ListIterator itr = subject.getInventory().iterator();
         while (itr.hasNext()) {
             try {
-                ItemStack element = (ItemStack)itr.next();
+                ItemStack element = (ItemStack) itr.next();
                 ItemMeta im = element.getItemMeta();
                 im.setDisplayName(Fall.randomEnum(Material.class).toString());
                 element.setItemMeta(im);
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 // empty catch block
             }
         }
@@ -1234,7 +1162,7 @@ extends JavaPlugin {
 
     public void ExecuteScream(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
-        subject.playSound(subject.getLocation(), Sound.GHAST_SCREAM, 1.0f, 1.0f);
+        subject.playSound(subject.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1.0f, 1.0f);
         sender.sendMessage(ChatColor.GREEN + "Scream sent");
     }
 
@@ -1243,28 +1171,28 @@ extends JavaPlugin {
         OldLocations.put(subject, subject.getLocation());
         Location location = null;
         Location permlocation = location = subject.getLocation();
-        permlocation.setX((double)subject.getLocation().getBlockX() + 0.5);
+        permlocation.setX((double) subject.getLocation().getBlockX() + 0.5);
         permlocation.setY(200.0);
-        permlocation.setZ((double)subject.getLocation().getBlockZ() + 0.5);
+        permlocation.setZ((double) subject.getLocation().getBlockZ() + 0.5);
         subject.teleport(permlocation);
         Location loc = subject.getLocation();
         loc = loc.subtract(1.0, 1.0, 1.0);
         this.AddtoRestore(loc);
-        loc.getBlock().setTypeId(20);
+        loc.getBlock().setType(Material.GLASS);
         int x = 1;
         while (x < 4) {
             loc = loc.add(0.0, 0.0, 1.0);
             this.AddtoRestore(loc);
-            loc.getBlock().setTypeId(20);
+            loc.getBlock().setType(Material.GLASS);
             loc = loc.add(0.0, 0.0, 1.0);
             this.AddtoRestore(loc);
-            loc.getBlock().setTypeId(20);
+            loc.getBlock().setType(Material.GLASS);
             loc = loc.add(0.0, 0.0, 1.0);
             this.AddtoRestore(loc);
-            loc.getBlock().setTypeId(20);
+            loc.getBlock().setType(Material.GLASS);
             loc = loc.add(1.0, 0.0, -3.0);
             this.AddtoRestore(loc);
-            loc.getBlock().setTypeId(20);
+            loc.getBlock().setType(Material.GLASS);
             ++x;
         }
         sender.sendMessage(ChatColor.GREEN + "Punishment Dispensed Successfuly");
@@ -1275,9 +1203,9 @@ extends JavaPlugin {
         Location loc1 = subject.getEyeLocation();
         Location loc2 = subject.getLocation();
         loc2 = loc2.add(5.0, 10.0, 5.0);
-        loc2.setY((double)(loc2.getBlockY() + 2));
-        loc2.setX((double)loc2.getBlockX() + 0.5);
-        loc2.setZ((double)loc2.getBlockZ() + 0.5);
+        loc2.setY((double) (loc2.getBlockY() + 2));
+        loc2.setX((double) loc2.getBlockX() + 0.5);
+        loc2.setZ((double) loc2.getBlockZ() + 0.5);
         Arrow arr = subject.getWorld().spawnArrow(loc2, new org.bukkit.util.Vector(loc1.getX() - loc2.getX(), loc1.getY() - loc2.getY(), loc1.getZ() - loc2.getZ()), 3.0f, 12.0f);
         arr.setFireTicks(999);
         subject.playEffect(loc1, Effect.BOW_FIRE, 5);
@@ -1296,20 +1224,20 @@ extends JavaPlugin {
         double z = playerLocation.getBlockZ();
         Location loc = new Location(playerLocation.getWorld(), x, y, z);
         Block block = subject.getWorld().getBlockAt(loc);
-        block.setTypeId(145);
+        block.setType(Material.ANVIL);
         sender.sendMessage(ChatColor.GREEN + "Anvil dropped");
     }
 
     public void LockPlayer(Player subject) {
         Location playerLocation = subject.getLocation();
-        Location centre = new Location(playerLocation.getWorld(), (double)playerLocation.getBlockX() + 0.5, (double)playerLocation.getBlockY(), (double)playerLocation.getBlockZ() + 0.5);
+        Location centre = new Location(playerLocation.getWorld(), (double) playerLocation.getBlockX() + 0.5, (double) playerLocation.getBlockY(), (double) playerLocation.getBlockZ() + 0.5);
         subject.teleport(centre);
     }
 
     public void ExecuteCage(CommandSender sender, String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
         Location playerLocation = subject.getLocation();
-        Location centre = new Location(playerLocation.getWorld(), (double)playerLocation.getBlockX() + 0.5, (double)playerLocation.getBlockY(), (double)playerLocation.getBlockZ() + 0.5);
+        Location centre = new Location(playerLocation.getWorld(), (double) playerLocation.getBlockX() + 0.5, (double) playerLocation.getBlockY(), (double) playerLocation.getBlockZ() + 0.5);
         subject.teleport(centre);
         this.log.info(centre.toString());
         this.log.info(subject.getLocation().toString());
@@ -1319,43 +1247,43 @@ extends JavaPlugin {
         double z = centre.getBlockZ();
         Location loc = new Location(playerLocation.getWorld(), x, y, z);
         Block block = subject.getWorld().getBlockAt(loc);
-        block.setTypeId(145);
+        block.setType(Material.ANVIL);
         x = playerLocation.getBlockX() - 1;
         y = playerLocation.getBlockY() + 16;
         z = playerLocation.getBlockZ();
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         x = playerLocation.getBlockX();
         y = playerLocation.getBlockY() + 17;
         z = playerLocation.getBlockZ() - 1;
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         x = playerLocation.getBlockX();
         y = playerLocation.getBlockY() + 18;
         z = playerLocation.getBlockZ() + 1;
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         x = playerLocation.getBlockX() + 1;
         y = playerLocation.getBlockY() + 19;
         z = playerLocation.getBlockZ();
         loc = new Location(playerLocation.getWorld(), x, y, z);
         block = subject.getWorld().getBlockAt(loc);
-        block.setTypeId(145);
+        block.setType(Material.ANVIL);
         x = playerLocation.getBlockX() - 1;
         y = playerLocation.getBlockY() + 20;
         z = playerLocation.getBlockZ();
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         x = playerLocation.getBlockX();
         y = playerLocation.getBlockY() + 21;
         z = playerLocation.getBlockZ() - 1;
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         x = playerLocation.getBlockX();
         y = playerLocation.getBlockY() + 22;
         z = playerLocation.getBlockZ() + 1;
         loc = new Location(playerLocation.getWorld(), x, y, z);
-        subject.getWorld().getBlockAt(loc).setTypeId(145);
+        subject.getWorld().getBlockAt(loc).setType(Material.ANVIL);
         sender.sendMessage(ChatColor.GREEN + "Cage Built");
     }
 
@@ -1384,7 +1312,7 @@ extends JavaPlugin {
 
     public void ExecuteRewind(CommandSender sender, String[] args) {
         final Player subject = this.getServer().getPlayer(args[1]);
-        this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this, new Runnable(){
+        this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin) this, new Runnable() {
 
             @Override
             public void run() {
@@ -1416,7 +1344,7 @@ extends JavaPlugin {
 
     public void ExecuteSpam(CommandSender sender, String[] args) {
         final Player subject = this.getServer().getPlayer(args[1]);
-        this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this, new Runnable(){
+        this.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin) this, new Runnable() {
 
             @Override
             public void run() {
@@ -1426,7 +1354,7 @@ extends JavaPlugin {
                         break;
                     }
                     case 2: {
-                        subject.sendMessage(ChatColor.MAGIC + ChatColor.GOLD + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                        subject.sendMessage(ChatColor.GOLD + "1.18 wen");
                         break;
                     }
                     case 3: {
@@ -1488,10 +1416,10 @@ extends JavaPlugin {
         }
         LC2 = subject.getWorld().getHighestBlockAt(LC2).getLocation();
         LC2 = LC2.add(0.0, 2.0, 0.0);
-        Wolf wchasing = (Wolf)subject.getWorld().spawnEntity(LC2, EntityType.WOLF);
+        Wolf wchasing = (Wolf) subject.getWorld().spawnEntity(LC2, EntityType.WOLF);
         wchasing.setAngry(true);
-        wchasing.damage(1.0, (Entity)subject);
-        wchasing.setTarget((LivingEntity)subject);
+        wchasing.damage(1.0, (Entity) subject);
+        wchasing.setTarget((LivingEntity) subject);
         sender.sendMessage(ChatColor.GREEN + "Hound Released");
     }
 
@@ -1517,9 +1445,9 @@ extends JavaPlugin {
         }
         LC2 = subject.getWorld().getHighestBlockAt(LC2).getLocation();
         LC2 = LC2.add(0.0, 2.0, 0.0);
-        IronGolem ichasing = (IronGolem)subject.getWorld().spawnEntity(LC2, EntityType.IRON_GOLEM);
-        ichasing.damage(1.0, (Entity)subject);
-        ichasing.setTarget((LivingEntity)subject);
+        IronGolem ichasing = (IronGolem) subject.getWorld().spawnEntity(LC2, EntityType.IRON_GOLEM);
+        ichasing.damage(1.0, (Entity) subject);
+        ichasing.setTarget((LivingEntity) subject);
         sender.sendMessage(ChatColor.GREEN + "Spawened an IronGolem behind them");
     }
 
@@ -1682,15 +1610,15 @@ extends JavaPlugin {
         }
 
         if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
-            block97:
+            stonemonsteregg:
             {
                 block98:
                 {
                     try {
-                        str = args[0];
+                        String str = args[0];
                         str.length();
                     } catch (Throwable t) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
                         sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
                         this.printusage(sender);
                         return true;
@@ -1698,33 +1626,17 @@ extends JavaPlugin {
                 }
             }
         }
-    }
-                public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("Permit") || cmd.getName().equalsIgnoreCase("Deny")) {
-            userName = "";
-
-        }
-            try {
-                Punishments.valueOf(args[1].toUpperCase());
-            }
-            catch (Throwable t) {
-                sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Please try again.");
-                return false;
-            }
-            if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
-                sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
-                return true;
-            }
 
         if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
-            block97: {
-                block98: {
+            stonemonsteregg2:
+            {
+                block98:
+                {
                     try {
-                        str = args[0];
+                        String str = args[0];
                         str.length();
-                    }
-                    catch (Throwable t) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Punishmental ###");
+                    } catch (Throwable t) {
+                        sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
                         sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
                         this.printusage(sender);
                         return true;
@@ -1732,7 +1644,7 @@ extends JavaPlugin {
                     if (sender.getName() == "CONSOLE" || sender.getName() == "") {
                         sender.sendMessage("Command being sent from console - Security bypassed");
                     } else {
-                        if (!this.SecurityCheck((Player)sender)) {
+                        if (!this.SecurityCheck((Player) sender)) {
                             sender.sendMessage("Invalid Credentials - could not run!");
                             return false;
                         }
@@ -1747,396 +1659,76 @@ extends JavaPlugin {
                         }
                     }
                     if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
+                        sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
                         sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
                         this.printusage(sender);
                         return true;
                     }
 
-            try {
-                Punishments.valueOf(args[1].toUpperCase());
-            }
-            catch (Throwable t) {
-                sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Please try again.");
-                return false;
-            }
-            if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
-                sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
-                return true;
-            }
-        }
-        if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
-            block97: {
-                block98: {
                     try {
-                        str = args[0];
-                        str.length();
+                        Punishments.valueOf(args[1].toUpperCase());
+                    } catch (Throwable t) {
+                        sender.sendMessage(ChatColor.RED + "> Punishment not recognised. Please try again.");
+                        return false;
                     }
-                    catch (Throwable t) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Punishmental ###");
-                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
-                        this.printusage(sender);
+                    if (!sender.hasPermission("punish." + args[1].toLowerCase())) {
+                        sender.sendMessage(ChatColor.RED + "> You don't have permission to use that punishment. Protection aborted.");
                         return true;
                     }
-                    if (sender.getName() == "CONSOLE" || sender.getName() == "") {
-                        sender.sendMessage("Command being sent from console - Security bypassed");
-                    } else {
-                        if (!this.SecurityCheck((Player)sender)) {
-                            sender.sendMessage("Invalid Credentials - could not run!");
-                            return false;
-                        }
-                        if (args[0].equalsIgnoreCase("restore")) {
-                            if (sender.hasPermission("punish.restore")) {
-                                sender.sendMessage(ChatColor.RED + "Restore functions do not seem to be working. I'll try anyway, but please check that it's done it :)");
-                                this.RestoreDamaged(sender, args);
-                                return true;
-                            }
-                            sender.sendMessage(ChatColor.RED + "You do not have the correct permissions to run this command");
-                            return false;
-                        }
-                    }
-                    if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
-                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
-                        this.printusage(sender);
-                        return true;
-                    }
-
-                    sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
-                    return true;
                 }
-                sender.sendMessage(ChatColor.YELLOW + "Error!");
-                sender.sendMessage(ChatColor.YELLOW + "The player " + args[1] + " or " + args[0] + " was not found");
-                sender.sendMessage(ChatColor.YELLOW + "Check the player is spelt correctly, and that argument three was a number");
-                return true;
-            }
-            return this.VetPunishment(sender, args);
-        }
-        if (cmd.getName().equalsIgnoreCase("SaveUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user. DID NOT SAVE USER DATA");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                v = new VirtualPlayer(p.getLevel(), p.getTotalExperience(), p.getHealth(), p.getInventory().getContents(), p.getExhaustion(), p.getFoodLevel());
-                Fall.PlayerRestore.put(p.getName(), v);
-                sender.sendMessage(ChatColor.GREEN + "User Data Sucessfully Stored");
-            }
-            return true;
-        }
-        if (cmd.getName().equalsIgnoreCase("RestoreUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user on this server!");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                if (!Fall.PlayerRestore.containsKey(p.getName())) {
-                    sender.sendMessage(ChatColor.RED + "You haven't made a restore file for this user!");
-                    sender.sendMessage(ChatColor.RED + "DID NOT RESTORE USER DATA!");
-                } else {
-                    p.setExhaustion(Fall.PlayerRestore.get((Object)p.getName()).exh);
-                    p.setLevel(Fall.PlayerRestore.get((Object)p.getName()).Level);
-                    p.setFoodLevel(Fall.PlayerRestore.get((Object)p.getName()).Hunger);
-                    p.setHealth((double)((int)Fall.PlayerRestore.get((Object)p.getName("aborted"))));
-                                return false;
-                            }
-                            filusername = null;
-                            rad = 0;
-                            while (filusername == null || rad <= 2000) {
-                                for (Entity ent : Psender.getNearbyEntities((double)rad, (double)rad, (double)rad)) {
-                                    try {
-                                        Ptarget = (Player)ent;
-                                        filusername = Ptarget.getName();
-                                    }
-                                    catch (Throwable var14_46) {
-                                        // empty catch block
-                                    }
-                                }
-                            }
-                            if (rad >= 2000) {
-                                sender.sendMessage(ChatColor.RED + "No nearby players!");
-                                return false;
-                            }
-                            s.replace("@near", filusername);
-                            sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
-                        }
-                        ++selection;
-                    }
-                    try {
-                        subject = this.getServer().getPlayer(args[1]);
-                        subject.getDisplayName();
-                        break block97;
-                    }
-                    catch (Throwable t) {
-                        try {
-                            subject = this.getServer().getPlayer(args[0]);
-                            subject.getDisplayName();
-                            one = args[1];
-                            args[1] = zero = args[0];
-                            args[0] = one;
-                            break block97;
-                        }
-                        catch (Throwable n) {
-                            if (!args[0].equalsIgnoreCase("all") && !args[1].equalsIgnoreCase("all")) break block98;
-                            var10_33 = this.getServer().getOnlinePlayers();
-                            var9_30 = var10_33.length;
-                            var8_32 = 0;
-                            while (var8_32 < var9_30);
-                        }
-                    }
-lbl1000:
-                    // 1 sources
-
+                if (cmd.getName().equalsIgnoreCase("punish") || cmd.getName().equalsIgnoreCase("p")) {
+                    block97:
                     {
-                        p = var10_33[var8_32];
-                        if (args[0].equalsIgnoreCase("all")) {
-                            one = args[1];
-                            args[1] = zero = args[0];
-                            args[0] = one;
-                        }
-                        args[1] = p.getName();
-                        if (!args[1].equalsIgnoreCase(sender.getName())) {
-                            this.VetPunishment(sender, args);
-                        }
-                        ++var8_32;
-                        continue;
-                    }
-lbl371:
-                    // 1 sources
-
-                    sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.YELLOW + "Error!");
-                sender.sendMessage(ChatColor.YELLOW + "The player " + args[1] + " or " + args[0] + " was not found");
-                sender.sendMessage(ChatColor.YELLOW + "Check the player is spelt correctly, and that argument three was a number");
-                return true;
-            }
-            return this.VetPunishment(sender, args);
-        }
-}
-        if (cmd.getName().equalsIgnoreCase("SaveUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user. DID NOT SAVE USER DATA");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                v = new VirtualPlayer(p.getLevel(), p.getTotalExperience(), p.getHealth(), p.getInventory().getContents(), p.getExhaustion(), p.getFoodLevel());
-                Fall.PlayerRestore.put(p.getName(), v);
-                sender.sendMessage(ChatColor.GREEN + "User Data Sucessfully Stored");
-            }
-            return true;
-        }
-        if (cmd.getName().equalsIgnoreCase("RestoreUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user on this server!");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                if (!Fall.PlayerRestore.containsKey(p.getName())) {
-                    sender.sendMessage(ChatColor.RED + "You haven't made a restore file for this user!");
-                    sender.sendMessage(ChatColor.RED + "DID NOT RESTORE USER DATA!");
-                } else {
-                    p.setExhaustion(Fall.PlayerRestore.get((Object)p.getName()).exh);
-                    p.setLevel(Fall.PlayerRestore.get((Object)p.getName()).Level);
-                    p.setFoodLevel(Fall.PlayerRestore.get((Object)p.getName()).Hunger);
-                    p.setHealth((double)((int)Fall.PlayerRestore.get((Object)p.getName() {
-                        sender.sendMessage("Command being sent from console - Security bypassed");
-                    } else {
-                        if (!this.SecurityCheck((Player)sender)) {
-                            sender.sendMessage("Invalid Credentials - could not run!");
-                            return false;
-                        }
-                        if (args[0].equalsIgnoreCase("restore")) {
-                            if (sender.hasPermission("punish.restore")) {
-                                sender.sendMessage(ChatColor.RED + "Restore functions do not seem to be working. I'll try anyway, but please check that it's done it :)");
-                                this.RestoreDamaged(sender, args);
+                        block98:
+                        {
+                            try {
+                                String str = args[0];
+                                str.length();
+                            } catch (Throwable t) {
+                                sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
+                                sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                                this.printusage(sender);
                                 return true;
                             }
-                            sender.sendMessage(ChatColor.RED + "You do not have the correct permissions to run this command");
-                            return false;
-                        }
-                    }
-                    if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
-                        sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
-                        sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
-                        this.printusage(sender);
-                        return true;
-                    }
-                    newArea = args;
-                    deadly = args.length;
-                    selection = 0;
-                    while (selection < deadly) {
-                        s = newArea[selection];
-                        if (s == "@revenge") {
-                            try {
-                                Psender = (Player)sender;
-                                Ptarget = (Player)Psender.getLastDamageCause().getEntity();
-                                s.replace("@revenge", Ptarget.getName());
-                                sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
-                            }
-                            catch (Throwable t) {
-                                sender.sendMessage(ChatColor.RED + "Either the last thing that hurt you was not human, or you are not");
-                                sender.sendMessage(ChatColor.RED + "Punishment aborted!");
-                                return false;
-                            }
-                        }
-                        if (s == "@top") {
-                            topusername = null;
-                            toplevel = 0;
-                            var14_45 = this.getServer().getOnlinePlayers();
-                            var13_43 = var14_45.length;
-                            var12_40 = 0;
-                            while (var12_40 < var13_43) {
-                                p = var14_45[var12_40];
-                                if (p.getLevel() > toplevel) {
-                                    topusername = p.getName();
-                                    toplevel = p.getLevel();
+                            if (sender.getName() == "CONSOLE" || sender.getName() == "") {
+                                sender.sendMessage("Command being sent from console - Security bypassed");
+                            } else {
+                                if (!this.SecurityCheck((Player) sender)) {
+                                    sender.sendMessage("Invalid Credentials - could not run!");
+                                    return false;
                                 }
-                                ++var12_40;
-                            }
-                            s.replace("@top", topusername);
-                            sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
-                        }
-                        if (s == "@bottom") {
-                            filusername = null;
-                            bottomlevel = 0;
-                            var14_45 = this.getServer().getOnlinePlayers();
-                            var13_43 = var14_45.length;
-                            var12_40 = 0;
-                            while (var12_40 < var13_43) {
-                                p = var14_45[var12_40];
-                                if (p.getLevel() < bottomlevel) {
-                                    filusername = p.getName();
-                                    bottomlevel = p.getLevel();
-                                }
-                                ++var12_40;
-                            }
-                            s.replace("@bottom", filusername);
-                            sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
-                        }
-                        if (s == "@near") {
-                            try {
-                                Psender = (Player)sender;
-                            }
-                            catch (Throwable t) {
-                                sender.sendMessage(ChatColor.RED + "You are not a player: Can not find nearby entities");
-                                sender.sendMessage(ChatColor.RED + "Punishment aborted!");
-                                return false;
-                            }
-                            filusername = null;
-                            rad = 0;
-                            while (filusername == null || rad <= 2000) {
-                                for (Entity ent : Psender.getNearbyEntities((double)rad, (double)rad, (double)rad)) {
-                                    try {
-                                        Ptarget = (Player)ent;
-                                        filusername = Ptarget.getName();
+                                if (args[0].equalsIgnoreCase("restore")) {
+                                    if (sender.hasPermission("punish.restore")) {
+                                        sender.sendMessage(ChatColor.RED + "Restore functions do not seem to be working. I'll try anyway, but please check that it's done it :)");
+                                        this.RestoreDamaged(sender, args);
+                                        return true;
                                     }
-                                    catch (Throwable var14_46) {
-                                        // empty catch block
-                                    }
+                                    sender.sendMessage(ChatColor.RED + "You do not have the correct permissions to run this command");
+                                    return false;
                                 }
                             }
-                            if (rad >= 2000) {
-                                sender.sendMessage(ChatColor.RED + "No nearby players!");
-                                return false;
+                            if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
+                                sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
+                                sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
+                                this.printusage(sender);
+                                return true;
                             }
-                            s.replace("@near", filusername);
-                            sender.sendMessage(ChatColor.GREEN + "Dynamic Term Interpreted: " + args);
-                        }
-                        ++selection;
-                    }
-                    try {
-                        subject = this.getServer().getPlayer(args[1]);
-                        subject.getDisplayName();
-                        break block97;
-                    }
-                    catch (Throwable t) {
-                        try {
-                            subject = this.getServer().getPlayer(args[0]);
-                            subject.getDisplayName();
-                            one = args[1];
-                            args[1] = zero = args[0];
-                            args[0] = one;
-                            break block97;
-                        }
-                        catch (Throwable n) {
-                            if (!args[0].equalsIgnoreCase("all") && !args[1].equalsIgnoreCase("all")) break block98;
-                            var10_33 = this.getServer().getOnlinePlayers();
-                            var9_30 = var10_33.length;
-                            var8_32 = 0;
-                            while (var8_32 < var9_30);
-                        }
-                    }
-/* lbl-1000: */
-                    // 1 sources
 
-                    {
-                        p = var10_33[var8_32];
-                        if (args[0].equalsIgnoreCase("all")) {
-                            one = args[1];
-                            args[1] = zero = args[0];
-                            args[0] = one;
+                            sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
+                            return true;
                         }
-                        args[1] = p.getName();
-                        if (!args[1].equalsIgnoreCase(sender.getName())) {
-                            this.VetPunishment(sender, args);
-                        }
-                        ++var8_32;
-                        continue;
                     }
-lbl371:
-                    // 1 sources
-
-                    sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.YELLOW + "Error!");
-                sender.sendMessage(ChatColor.YELLOW + "The player " + args[1] + " or " + args[0] + " was not found");
-                sender.sendMessage(ChatColor.YELLOW + "Check the player is spelt correctly, and that argument three was a number");
-                return true;
-            }
-            return this.VetPunishment(sender, args);
-        }
-        if (cmd.getName().equalsIgnoreCase("SaveUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user. DID NOT SAVE USER DATA");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                v = new VirtualPlayer(p.getLevel(), p.getTotalExperience(), p.getHealth(), p.getInventory().getContents(), p.getExhaustion(), p.getFoodLevel());
-                Fall.PlayerRestore.put(p.getName(), v);
-                sender.sendMessage(ChatColor.GREEN + "User Data Sucessfully Stored");
-            }
-            return true;
-        }
-        if (cmd.getName().equalsIgnoreCase("RestoreUserData")) {
-            if (this.getServer().getPlayer(args[0]) == null) {
-                sender.sendMessage(ChatColor.RED + "Can't find user on this server!");
-            } else {
-                p = this.getServer().getPlayer(args[0]);
-                if (!Fall.PlayerRestore.containsKey(p.getName())) {
-                    sender.sendMessage(ChatColor.RED + "You haven't made a restore file for this user!");
-                    sender.sendMessage(ChatColor.RED + "DID NOT RESTORE USER DATA!");
-                } else {
-                    p.setExhaustion(Fall.PlayerRestore.get((Object)p.getName()).exh);
-                    p.setLevel(Fall.PlayerRestore.get((Object)p.getName()).Level);
-                    p.setFoodLevel(Fall.PlayerRestore.get((Object)p.getName()).Hunger);
-                    p.setHealth((double)((int)Fall.PlayerRestore.get((Object)p.getName()).Health));
-                    p.setDisplayName(p.getName());
-                    p.getInventory().clear();
-                    p.getInventory().setContents(Fall.PlayerRestore.get((Object)p.getName()).inv);
-                    sender.sendMessage(ChatColor.GREEN + "User Sucessfully Restored from Backup");
                 }
             }
+            lbl371:
+            // 1 sources
+
+            sender.sendMessage(ChatColor.GREEN + "All punishments complete!");
             return true;
         }
-        if (cmd.getName().equalsIgnoreCase("ResetPunishmental")) {
-            if (sender.hasPermission("ResetPunishmental")) {
-                sender.sendMessage(ChatColor.YELLOW + "Resetting punishmental...");
-                this.activateFailsafe();
-                sender.sendMessage(ChatColor.GREEN + "Punishmental reset. All punishments and tasks cancelled");
-            }
-            return true;
-        }
-        sender.sendMessage(ChatColor.YELLOW + "UNKNOWN ERROR: Please report to the developer what you were doing to get this notice.");
-        return false;
-    }
+
+   return true;}
+
 
     public boolean VetPunishment(final CommandSender sender, final String[] args) {
         Player subject = this.getServer().getPlayer(args[1]);
@@ -2179,7 +1771,7 @@ lbl371:
             }
             catch (Throwable t) {
                 this.log.info(t.getMessage());
-                sender.sendMessage(ChatColor.YELLOW + "### ROEStudios - Bukkit Plugins ###");
+                sender.sendMessage(ChatColor.YELLOW + "### soup6020 - PunishmentalEX ###");
                 sender.sendMessage(ChatColor.YELLOW + "Error!");
                 sender.sendMessage(ChatColor.YELLOW + "The amount of damage (" + args[2] + ") was not a number or the letter x / y");
                 sender.sendMessage(ChatColor.YELLOW + "If you do not wish to specify damage, use 'x'");
@@ -2286,7 +1878,7 @@ lbl371:
         if (configSettings.Failsafe) {
             this.getServer().getScheduler().cancelTasks((Plugin)this);
             this.lagCheckID = 0;
-            Player[] playerArray = this.getServer().getOnlinePlayers();
+            Player[] playerArray = this.getServer().getOnlinePlayers().toArray(new Player[0]);
             int n = playerArray.length;
             int n2 = 0;
             while (n2 < n) {
@@ -2318,7 +1910,7 @@ lbl371:
         }
         catch (Exception ex) {
             sender.sendMessage(ChatColor.YELLOW + "Punishment No Comprende");
-            sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
+            sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
             sender.sendMessage(ChatColor.RED + " ERROR found whilst using the punish command");
             sender.sendMessage(ChatColor.RED + "   Unknown Punishment Type: " + args[0]);
             sender.sendMessage(ChatColor.RED + "     Currently installed Punishments:");
@@ -2589,10 +2181,6 @@ lbl371:
                 this.ExecuteVoid(sender, args);
                 break;
             }
-            case WEB: {
-                this.ExecuteWeb(sender, args);
-                break;
-            }
             case FEXPLODE: {
                 this.ExecutefExplode(sender, args);
                 break;
@@ -2728,7 +2316,7 @@ lbl371:
             default: {
                 this.printusage(sender);
                 sender.sendMessage(ChatColor.YELLOW + "Punishment No Comprende");
-                sender.sendMessage(ChatColor.RED + "### ROEStudios - Bukkit Plugins - Punishmental ###");
+                sender.sendMessage(ChatColor.RED + "### soup6020 - PunishmentalEX ###");
                 sender.sendMessage(ChatColor.RED + " ERROR found whilst using the punish command");
                 sender.sendMessage(ChatColor.RED + "   Unknown Punishment Type: " + args[0]);
                 return false;
@@ -2738,7 +2326,6 @@ lbl371:
     }
 
     public void printusage(CommandSender sender) {
-        sender.sendMessage(ChatColor.DARK_AQUA + "    Restore: Restores all damage that web or hole do to the map");
         sender.sendMessage(ChatColor.DARK_AQUA + "    Stop: Stops the punishment without killing");
         sender.sendMessage(ChatColor.AQUA + "Fall:" + ChatColor.DARK_AQUA + " Drops Player from block 200");
         sender.sendMessage(ChatColor.AQUA + "InFall:" + ChatColor.DARK_AQUA + " Makes the player fall continueously until you END them");
@@ -2751,7 +2338,6 @@ lbl371:
         sender.sendMessage(ChatColor.AQUA + "Creeper:" + ChatColor.DARK_AQUA + " Spawns a creeper next to them");
         sender.sendMessage(ChatColor.AQUA + "Void:" + ChatColor.DARK_AQUA + " Transports the player to the void");
         sender.sendMessage(ChatColor.AQUA + "InVoid:" + ChatColor.DARK_AQUA + " Spawns and respawns in the void until you END them");
-        sender.sendMessage(ChatColor.AQUA + "Web:" + ChatColor.DARK_AQUA + " Surrounds the player in blocks of web");
         sender.sendMessage(ChatColor.AQUA + "Lavablock:" + ChatColor.DARK_AQUA + " The next block the player breaks will turn into lava");
         sender.sendMessage(ChatColor.AQUA + "Hole:" + ChatColor.DARK_AQUA + " The player falls down a freshly dug pit");
         sender.sendMessage(ChatColor.AQUA + "Teleport:" + ChatColor.DARK_AQUA + " Teleports the player to a random location");
@@ -2826,7 +2412,7 @@ lbl371:
     }
 
     public boolean SecurityCheck(Player player) {
-        return player.hasPermission("punish.slap") || player.hasPermission("punish.nuke") || player.hasPermission("punish.bomb") || player.hasPermission("punish.scream") || player.hasPermission("punish.wrong") || player.hasPermission("punish.trip") || player.hasPermission("punish.arab") || player.hasPermission("punish.metro") || player.hasPermission("punish.wrong") || player.hasPermission("punish.idtheft") || player.hasPermission("punish.useless") || player.hasPermission("punish.crash") || player.hasPermission("punish.squid") || player.hasPermission("punish.exblock") || player.hasPermission("punish.hostile") || player.hasPermission("punish.rewind") || player.hasPermission("punish.night") || player.hasPermission("punish.chat") || player.hasPermission("punish.block") || player.hasPermission("punish.fragile") || player.hasPermission("punish.kick") || player.hasPermission("punish.rename") || player.hasPermission("punish.flamingarrow") || player.hasPermission("punish.surround") || player.hasPermission("punish.annoy") || player.hasPermission("punish.leveldown") || player.hasPermission("punish.unaware") || player.hasPermission("punish.lag") || player.hasPermission("punish.choke") || player.hasPermission("punish.stop") || player.hasPermission("punish.shoot") || player.hasPermission("punish.glass") || player.hasPermission("punish.chatroll") || player.hasPermission("punish.floorportal") || player.hasPermission("punish.strip") || player.hasPermission("punish.blind") || player.hasPermission("punish.drunk") || player.hasPermission("punish.starve") || player.hasPermission("punish.slow") || player.hasPermission("punish.poison") || player.hasPermission("punish.paranoia") || player.hasPermission("punish.hailfire") || player.hasPermission("punish.restore") || player.hasPermission("punish.irongolem") || player.hasPermission("punish.freeze") || player.hasPermission("punish.teleport") || player.hasPermission("punish.end") || player.hasPermission("punish.teleport") || player.hasPermission("punish.lavablock") || player.hasPermission("punish.fall") || player.hasPermission("punish.hole") || player.hasPermission("punish.creeper") || player.hasPermission("punish.strike") || player.hasPermission("punish.explode") || player.hasPermission("punish.web") || player.hasPermission("punish.infall") || player.hasPermission("punish.void") || player.hasPermission("punish.invoid") || player.hasPermission("punish.hounds") || player.hasPermission("punish.mute") || player.hasPermission("punish.drop") || player.hasPermission("punish.anvil") || player.hasPermission("punish.cage") || player.hasPermission("punish.fakeop") || player.hasPermission("punish.popup") || player.hasPermission("punish.white") || player.hasPermission("punish.booty") || player.hasPermission("punish.display") || player.hasPermission("punish.potato") || player.hasPermission("punish.pumpkin") || player.hasPermission("punish.armour") || player.hasPermission("punish.popular") || player.hasPermission("punish.trees") || player.hasPermission("punish.hiss") || player.hasPermission("punish.ambiance") || player.hasPermission("punish.maim") || player.hasPermission("punish.brittle") || player.hasPermission("punish.burn") || player.hasPermission("punish.tnttrick") || player.hasPermission("punish.tnt") || player.hasPermission("punish.fire");
+        return player.hasPermission("punish.slap") || player.hasPermission("punish.nuke") || player.hasPermission("punish.bomb") || player.hasPermission("punish.scream") || player.hasPermission("punish.wrong") || player.hasPermission("punish.trip") || player.hasPermission("punish.arab") || player.hasPermission("punish.metro") || player.hasPermission("punish.wrong") || player.hasPermission("punish.idtheft") || player.hasPermission("punish.useless") || player.hasPermission("punish.crash") || player.hasPermission("punish.squid") || player.hasPermission("punish.exblock") || player.hasPermission("punish.hostile") || player.hasPermission("punish.rewind") || player.hasPermission("punish.night") || player.hasPermission("punish.chat") || player.hasPermission("punish.block") || player.hasPermission("punish.fragile") || player.hasPermission("punish.kick") || player.hasPermission("punish.rename") || player.hasPermission("punish.flamingarrow") || player.hasPermission("punish.surround") || player.hasPermission("punish.annoy") || player.hasPermission("punish.leveldown") || player.hasPermission("punish.unaware") || player.hasPermission("punish.lag") || player.hasPermission("punish.choke") || player.hasPermission("punish.stop") || player.hasPermission("punish.shoot") || player.hasPermission("punish.glass") || player.hasPermission("punish.chatroll") || player.hasPermission("punish.floorportal") || player.hasPermission("punish.strip") || player.hasPermission("punish.blind") || player.hasPermission("punish.drunk") || player.hasPermission("punish.starve") || player.hasPermission("punish.slow") || player.hasPermission("punish.poison") || player.hasPermission("punish.paranoia") || player.hasPermission("punish.hailfire") || player.hasPermission("punish.restore") || player.hasPermission("punish.irongolem") || player.hasPermission("punish.freeze") || player.hasPermission("punish.teleport") || player.hasPermission("punish.end") || player.hasPermission("punish.teleport") || player.hasPermission("punish.lavablock") || player.hasPermission("punish.fall") || player.hasPermission("punish.hole") || player.hasPermission("punish.creeper") || player.hasPermission("punish.strike") || player.hasPermission("punish.explode") ||  player.hasPermission("punish.infall") || player.hasPermission("punish.void") || player.hasPermission("punish.invoid") || player.hasPermission("punish.hounds") || player.hasPermission("punish.mute") || player.hasPermission("punish.drop") || player.hasPermission("punish.anvil") || player.hasPermission("punish.cage") || player.hasPermission("punish.fakeop") || player.hasPermission("punish.popup") || player.hasPermission("punish.white") || player.hasPermission("punish.booty") || player.hasPermission("punish.display") || player.hasPermission("punish.potato") || player.hasPermission("punish.pumpkin") || player.hasPermission("punish.armour") || player.hasPermission("punish.popular") || player.hasPermission("punish.trees") || player.hasPermission("punish.hiss") || player.hasPermission("punish.ambiance") || player.hasPermission("punish.maim") || player.hasPermission("punish.brittle") || player.hasPermission("punish.burn") || player.hasPermission("punish.tnttrick") || player.hasPermission("punish.tnt") || player.hasPermission("punish.fire");
     }
 
     class ExceptionHandler

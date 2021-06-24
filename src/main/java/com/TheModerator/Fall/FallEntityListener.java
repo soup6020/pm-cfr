@@ -51,6 +51,7 @@ implements Listener {
             subject.getHealth();
             if (Fall.BeingPunished.containsKey(subject)) {
                 Wolf w;
+                IronGolem g;
                 if (Fall.BeingPunished.get(subject) == Fall.Punishments.BURN && (double)Fall.HealthTarget.get(subject).intValue() >= subject.getHealth()) {
                     event.setCancelled(true);
                     Fall.HealthTarget.remove(subject);
@@ -83,8 +84,8 @@ implements Listener {
                     Fall.BeingPunished.remove(subject);
                 }
                 if (Fall.BeingPunished.get(subject) == Fall.Punishments.IRONGOLEM && (double)Fall.HealthTarget.get(subject).intValue() >= subject.getHealth() && event instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent)event).getDamager() instanceof IronGolem) {
-                    w = (IronGolem)((EntityDamageByEntityEvent)event).getDamager();
-                    w.setHealth(0.0);
+                    g = (IronGolem)((EntityDamageByEntityEvent)event).getDamager();
+                    g.setHealth(0.0);
                     Fall.HealthTarget.remove(subject);
                     Fall.BeingPunished.remove(subject);
                 }

@@ -1,5 +1,5 @@
 name: PunishmentalEX
-main: com.soup6020.pmex
+main: com.TheModerator.Fall
 version: 6.1
 author: TheModerator (Illegal port by soup6020)
 softdepend: [WorldEdit]
@@ -9,22 +9,6 @@ commands:
       description: Use /Punish followed by the Punishment type and the player you are punishing
       usage: /Punish [Punishment] <-> [Username/All] [Opt. damage/x/y] [amount of times] [delay] [Other]
       aliases: p
-   Protect:
-      description: Protects an area (defined with WorldGuard) with the specified punishment
-      usage: /Protect [<Area>/List/Enable/Disable/Permit/Deny] [Punishment/<Area>] (Y/N)
-      aliases: pp
-   Unprotect:
-      description: Unprotects an area
-      usage: /Unprotect [Area]
-      aliases: upp
-   Lockdown:
-      description: Prevents anyone from accessing the area, including the owner
-      usage: /Lockdown [Area]
-      aliases: lock
-   Reopen:
-      description: Removes any lockdown on an area
-      usage: /Reopen [Area]
-      aliases: rpp
    SaveUserData:
       description: Saves the users XP, Inventory, HP ect...
       usage: /SaveUserData [Username]
@@ -35,18 +19,6 @@ commands:
       description: Resets all punishmental punishments and releases any tasks utilised by the plugin.
       usage: /ResetPunishmental
 permissions:
-    punishAreas.*:
-        description: Permissions related to making punishment-protected areas
-        children:
-            punishAreas.admin: true
-            punishAreas.make: true
-            punishAreas.EXEMPT: true
-    punishAreas.admin:
-        default: op
-    punishAreas.make:
-        default: op
-    punishAreas.except:
-        default: false
     ResetPunishmental:
         description: Allows the person to reset punishmental
         default: op
