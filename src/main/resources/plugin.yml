@@ -1,5 +1,5 @@
 name: PunishmentalEX
-main: com.TheModerator.Fall
+main: com.TheModerator.Fall.Fall
 version: 6.1
 author: TheModerator (Illegal port by soup6020)
 softdepend: [WorldEdit]
